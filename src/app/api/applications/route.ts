@@ -1,6 +1,10 @@
 import { Prisma } from "@/generated/prisma";
 import { NextResponse } from "next/server";
 
+import {
+  APPLICATION_STATUS_OPTIONS,
+  normalizeApplicationStatus,
+} from "@/lib/application-status";
 import { prisma } from "@/lib/prisma";
 
 const handlePrismaError = (error: unknown) => {
@@ -114,6 +118,17 @@ export async function POST(request: Request) {
     );
   }
 
+  const normalizedStatus = normalizeApplicationStatus(payload.status);
+
+  if (!normalizedStatus) {
+    return NextResponse.json(
+      {
+        error: `status must be one of: ${APPLICATION_STATUS_OPTIONS.map((option) => option.label).join(", ")}.`,
+      },
+      { status: 400 },
+    );
+  }
+
   const dateApplied = parseDateApplied(payload.dateApplied);
 
   if (!dateApplied) {
@@ -137,7 +152,7 @@ export async function POST(request: Request) {
       data: {
         company: payload.company.trim(),
         role: payload.role.trim(),
-        status: payload.status.trim(),
+        status: normalizedStatus,
         location: parseOptionalString(payload.location),
         salary,
         dateApplied,
@@ -146,6 +161,80 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(application, { status: 201 });
+  } catch (error) {
+    return handlePrismaError(error);
+  }
+}
+
+export async function PATCH(request: Request) {
+  let payload: { id?: unknown; status?: unknown };
+
+  try {
+    payload = (await request.json()) as { id?: unknown; status?: unknown };
+  } catch {
+    return NextResponse.json(
+      { error: "Request body must be valid JSON." },
+      { status: 400 },
+    );
+  }
+
+  if (!isNonEmptyString(payload.id) || !isNonEmptyString(payload.status)) {
+    return NextResponse.json(
+      { error: "id and status are required." },
+      { status: 400 },
+    );
+  }
+
+  const normalizedStatus = normalizeApplicationStatus(payload.status);
+
+  if (!normalizedStatus) {
+    return NextResponse.json(
+      {
+        error: `status must be one of: ${APPLICATION_STATUS_OPTIONS.map((option) => option.label).join(", ")}.`,
+      },
+      { status: 400 },
+    );
+  }
+
+  try {
+    const updated = await prisma.application.update({
+      where: { id: payload.id.trim() },
+      data: {
+        status: normalizedStatus,
+      },
+    });
+
+    return NextResponse.json(updated);
+  } catch (error) {
+    return handlePrismaError(error);
+  }
+}
+
+export async function DELETE(request: Request) {
+  let payload: { id?: unknown };
+
+  try {
+    payload = (await request.json()) as { id?: unknown };
+  } catch {
+    return NextResponse.json(
+      { error: "Request body must be valid JSON." },
+      { status: 400 },
+    );
+  }
+
+  if (!isNonEmptyString(payload.id)) {
+    return NextResponse.json(
+      { error: "id is required." },
+      { status: 400 },
+    );
+  }
+
+  try {
+    await prisma.application.delete({
+      where: { id: payload.id.trim() },
+    });
+
+    return NextResponse.json({ success: true });
   } catch (error) {
     return handlePrismaError(error);
   }

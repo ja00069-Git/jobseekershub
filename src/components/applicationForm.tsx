@@ -1,20 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+import {
+  APPLICATION_STATUS_OPTIONS,
+  type ApplicationStatus,
+} from "@/lib/application-status";
 
 const getTodayDate = () => new Date().toISOString().split("T")[0] ?? "";
+const fieldClassName =
+  "w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-blue-100";
 
 export default function ApplicationForm() {
+  const router = useRouter();
   const [company, setCompany] = useState("");
   const [role, setRole] = useState("");
-  const [status, setStatus] = useState("Applied");
+  const [status, setStatus] = useState<ApplicationStatus>("applied");
   const [location, setLocation] = useState("");
-  const [dateApplied, setDateApplied] = useState(getTodayDate);
+  const [dateApplied, setDateApplied] = useState("");
   const [salary, setSalary] = useState("");
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+
+  useEffect(() => {
+    setDateApplied(getTodayDate());
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -50,11 +63,12 @@ export default function ApplicationForm() {
       setSuccessMessage("Application added successfully.");
       setCompany("");
       setRole("");
-      setStatus("Applied");
+      setStatus("applied");
       setLocation("");
       setDateApplied(getTodayDate());
       setSalary("");
       setNotes("");
+      router.refresh();
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : "Something went wrong.",
@@ -67,15 +81,31 @@ export default function ApplicationForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full max-w-2xl space-y-4 rounded-xl border p-6 shadow-sm"
+      className="w-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6"
     >
-      <h2 className="text-2xl font-bold">Add Job Application</h2>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-600">
+            New application
+          </p>
+          <h2 className="mt-2 text-2xl font-semibold text-slate-900">
+            Log an opportunity
+          </h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Add a role, current stage, and notes so your pipeline stays tidy.
+          </p>
+        </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="space-y-1">
-          <span className="text-sm font-medium">Company</span>
+        <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+          Live sync
+        </span>
+      </div>
+
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        <label className="space-y-1.5">
+          <span className="text-sm font-medium text-slate-700">Company</span>
           <input
-            className="w-full rounded-md border p-2"
+            className={fieldClassName}
             placeholder="Stripe"
             value={company}
             onChange={(e) => setCompany(e.target.value)}
@@ -83,10 +113,10 @@ export default function ApplicationForm() {
           />
         </label>
 
-        <label className="space-y-1">
-          <span className="text-sm font-medium">Role</span>
+        <label className="space-y-1.5">
+          <span className="text-sm font-medium text-slate-700">Role</span>
           <input
-            className="w-full rounded-md border p-2"
+            className={fieldClassName}
             placeholder="Backend Engineer"
             value={role}
             onChange={(e) => setRole(e.target.value)}
@@ -94,57 +124,58 @@ export default function ApplicationForm() {
           />
         </label>
 
-        <label className="space-y-1">
-          <span className="text-sm font-medium">Status</span>
+        <label className="space-y-1.5">
+          <span className="text-sm font-medium text-slate-700">Status</span>
           <select
-            className="w-full rounded-md border p-2"
+            className={fieldClassName}
             value={status}
-            onChange={(e) => setStatus(e.target.value)}
+            onChange={(e) => setStatus(e.target.value as ApplicationStatus)}
           >
-            <option value="Applied">Applied</option>
-            <option value="Interviewing">Interviewing</option>
-            <option value="Offer">Offer</option>
-            <option value="Rejected">Rejected</option>
+            {APPLICATION_STATUS_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
         </label>
 
-        <label className="space-y-1">
-          <span className="text-sm font-medium">Date Applied</span>
+        <label className="space-y-1.5">
+          <span className="text-sm font-medium text-slate-700">Date Applied</span>
           <input
             type="date"
-            className="w-full rounded-md border p-2"
+            className={fieldClassName}
             value={dateApplied}
             onChange={(e) => setDateApplied(e.target.value)}
             required
           />
         </label>
 
-        <label className="space-y-1 sm:col-span-2">
-          <span className="text-sm font-medium">Location</span>
+        <label className="space-y-1.5 sm:col-span-2">
+          <span className="text-sm font-medium text-slate-700">Location</span>
           <input
-            className="w-full rounded-md border p-2"
-            placeholder="Remote"
+            className={fieldClassName}
+            placeholder="Remote or onsite"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
           />
         </label>
 
-        <label className="space-y-1">
-          <span className="text-sm font-medium">Salary</span>
+        <label className="space-y-1.5">
+          <span className="text-sm font-medium text-slate-700">Salary</span>
           <input
             type="number"
             min="0"
-            className="w-full rounded-md border p-2"
+            className={fieldClassName}
             placeholder="180000"
             value={salary}
             onChange={(e) => setSalary(e.target.value)}
           />
         </label>
 
-        <label className="space-y-1 sm:col-span-2">
-          <span className="text-sm font-medium">Notes</span>
+        <label className="space-y-1.5 sm:col-span-2">
+          <span className="text-sm font-medium text-slate-700">Notes</span>
           <textarea
-            className="w-full rounded-md border p-2"
+            className={`${fieldClassName} min-h-24 resize-y`}
             rows={4}
             placeholder="Referral, recruiter notes, next steps..."
             value={notes}
@@ -154,24 +185,30 @@ export default function ApplicationForm() {
       </div>
 
       {errorMessage ? (
-        <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
           {errorMessage}
         </p>
       ) : null}
 
       {successMessage ? (
-        <p className="rounded-md bg-green-50 px-3 py-2 text-sm text-green-700">
+        <p className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
           {successMessage}
         </p>
       ) : null}
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="rounded-md bg-blue-600 px-4 py-2 text-white disabled:cursor-not-allowed disabled:opacity-70"
-      >
-        {isSubmitting ? "Saving..." : "Add Application"}
-      </button>
+      <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+        >
+          {isSubmitting ? "Saving..." : "Add Application"}
+        </button>
+
+        <p className="text-xs text-slate-500">
+          The board and table refresh automatically after a successful save.
+        </p>
+      </div>
     </form>
   );
 }

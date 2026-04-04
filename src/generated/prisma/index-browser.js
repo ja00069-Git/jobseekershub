@@ -146,7 +146,15 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-
+exports.Status = exports.$Enums.Status = {
+  wishlist: 'wishlist',
+  applied: 'applied',
+  phone: 'phone',
+  interview: 'interview',
+  offer: 'offer',
+  rejected: 'rejected',
+  withdrawn: 'withdrawn'
+};
 
 exports.Prisma.ModelName = {
   Application: 'Application'

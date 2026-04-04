@@ -1,3 +1,13 @@
+enum Status {
+  wishlist
+  applied
+  phone
+  interview
+  offer
+  rejected
+  withdrawn
+}
+
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -11,7 +21,7 @@ model Application {
   id          String   @id @default(cuid())
   company     String
   role        String
-  status      String
+  status      Status   @default(applied)
   location    String?
   salary      Int?
   dateApplied DateTime

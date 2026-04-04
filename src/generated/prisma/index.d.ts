@@ -20,6 +20,28 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
 export type Application = $Result.DefaultSelection<Prisma.$ApplicationPayload>
 
 /**
+ * Enums
+ */
+export namespace $Enums {
+  export const Status: {
+  wishlist: 'wishlist',
+  applied: 'applied',
+  phone: 'phone',
+  interview: 'interview',
+  offer: 'offer',
+  rejected: 'rejected',
+  withdrawn: 'withdrawn'
+};
+
+export type Status = (typeof Status)[keyof typeof Status]
+
+}
+
+export type Status = $Enums.Status
+
+export const Status: typeof $Enums.Status
+
+/**
  * ##  Prisma Client ʲˢ
  *
  * Type-safe database client for TypeScript & Node.js
@@ -890,7 +912,7 @@ export namespace Prisma {
     id: string | null
     company: string | null
     role: string | null
-    status: string | null
+    status: $Enums.Status | null
     location: string | null
     salary: number | null
     dateApplied: Date | null
@@ -902,7 +924,7 @@ export namespace Prisma {
     id: string | null
     company: string | null
     role: string | null
-    status: string | null
+    status: $Enums.Status | null
     location: string | null
     salary: number | null
     dateApplied: Date | null
@@ -1059,7 +1081,7 @@ export namespace Prisma {
     id: string
     company: string
     role: string
-    status: string
+    status: $Enums.Status
     location: string | null
     salary: number | null
     dateApplied: Date
@@ -1143,7 +1165,7 @@ export namespace Prisma {
       id: string
       company: string
       role: string
-      status: string
+      status: $Enums.Status
       location: string | null
       salary: number | null
       dateApplied: Date
@@ -1575,7 +1597,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Application", 'String'>
     readonly company: FieldRef<"Application", 'String'>
     readonly role: FieldRef<"Application", 'String'>
-    readonly status: FieldRef<"Application", 'String'>
+    readonly status: FieldRef<"Application", 'Status'>
     readonly location: FieldRef<"Application", 'String'>
     readonly salary: FieldRef<"Application", 'Int'>
     readonly dateApplied: FieldRef<"Application", 'DateTime'>
@@ -2025,6 +2047,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Status'
+   */
+  export type EnumStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Status'>
+    
+
+
+  /**
+   * Reference to a field of type 'Status[]'
+   */
+  export type ListEnumStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Status[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -2076,7 +2112,7 @@ export namespace Prisma {
     id?: StringFilter<"Application"> | string
     company?: StringFilter<"Application"> | string
     role?: StringFilter<"Application"> | string
-    status?: StringFilter<"Application"> | string
+    status?: EnumStatusFilter<"Application"> | $Enums.Status
     location?: StringNullableFilter<"Application"> | string | null
     salary?: IntNullableFilter<"Application"> | number | null
     dateApplied?: DateTimeFilter<"Application"> | Date | string
@@ -2103,7 +2139,7 @@ export namespace Prisma {
     NOT?: ApplicationWhereInput | ApplicationWhereInput[]
     company?: StringFilter<"Application"> | string
     role?: StringFilter<"Application"> | string
-    status?: StringFilter<"Application"> | string
+    status?: EnumStatusFilter<"Application"> | $Enums.Status
     location?: StringNullableFilter<"Application"> | string | null
     salary?: IntNullableFilter<"Application"> | number | null
     dateApplied?: DateTimeFilter<"Application"> | Date | string
@@ -2135,7 +2171,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Application"> | string
     company?: StringWithAggregatesFilter<"Application"> | string
     role?: StringWithAggregatesFilter<"Application"> | string
-    status?: StringWithAggregatesFilter<"Application"> | string
+    status?: EnumStatusWithAggregatesFilter<"Application"> | $Enums.Status
     location?: StringNullableWithAggregatesFilter<"Application"> | string | null
     salary?: IntNullableWithAggregatesFilter<"Application"> | number | null
     dateApplied?: DateTimeWithAggregatesFilter<"Application"> | Date | string
@@ -2147,7 +2183,7 @@ export namespace Prisma {
     id?: string
     company: string
     role: string
-    status: string
+    status?: $Enums.Status
     location?: string | null
     salary?: number | null
     dateApplied: Date | string
@@ -2159,7 +2195,7 @@ export namespace Prisma {
     id?: string
     company: string
     role: string
-    status: string
+    status?: $Enums.Status
     location?: string | null
     salary?: number | null
     dateApplied: Date | string
@@ -2171,7 +2207,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     company?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     location?: NullableStringFieldUpdateOperationsInput | string | null
     salary?: NullableIntFieldUpdateOperationsInput | number | null
     dateApplied?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -2183,7 +2219,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     company?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     location?: NullableStringFieldUpdateOperationsInput | string | null
     salary?: NullableIntFieldUpdateOperationsInput | number | null
     dateApplied?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -2195,7 +2231,7 @@ export namespace Prisma {
     id?: string
     company: string
     role: string
-    status: string
+    status?: $Enums.Status
     location?: string | null
     salary?: number | null
     dateApplied: Date | string
@@ -2207,7 +2243,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     company?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     location?: NullableStringFieldUpdateOperationsInput | string | null
     salary?: NullableIntFieldUpdateOperationsInput | number | null
     dateApplied?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -2219,7 +2255,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     company?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     location?: NullableStringFieldUpdateOperationsInput | string | null
     salary?: NullableIntFieldUpdateOperationsInput | number | null
     dateApplied?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -2240,6 +2276,13 @@ export namespace Prisma {
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
     not?: NestedStringFilter<$PrismaModel> | string
+  }
+
+  export type EnumStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.Status | EnumStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumStatusFilter<$PrismaModel> | $Enums.Status
   }
 
   export type StringNullableFilter<$PrismaModel = never> = {
@@ -2346,6 +2389,16 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
+  export type EnumStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Status | EnumStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumStatusWithAggregatesFilter<$PrismaModel> | $Enums.Status
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumStatusFilter<$PrismaModel>
+    _max?: NestedEnumStatusFilter<$PrismaModel>
+  }
+
   export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -2398,6 +2451,10 @@ export namespace Prisma {
     set?: string
   }
 
+  export type EnumStatusFieldUpdateOperationsInput = {
+    set?: $Enums.Status
+  }
+
   export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null
   }
@@ -2426,6 +2483,13 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringFilter<$PrismaModel> | string
+  }
+
+  export type NestedEnumStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.Status | EnumStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumStatusFilter<$PrismaModel> | $Enums.Status
   }
 
   export type NestedStringNullableFilter<$PrismaModel = never> = {
@@ -2490,6 +2554,16 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntFilter<$PrismaModel> | number
+  }
+
+  export type NestedEnumStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Status | EnumStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumStatusWithAggregatesFilter<$PrismaModel> | $Enums.Status
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumStatusFilter<$PrismaModel>
+    _max?: NestedEnumStatusFilter<$PrismaModel>
   }
 
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
