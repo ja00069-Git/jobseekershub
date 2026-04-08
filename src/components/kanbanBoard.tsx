@@ -190,7 +190,7 @@ function KanbanSkeleton() {
               <div className={`rounded-full px-3 py-1 text-sm font-semibold ${option.color}`}>
                 {option.label}
               </div>
-              <span className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-slate-400 shadow-sm">
+              <span className="ui-badge-soft text-slate-400">
                 —
               </span>
             </div>
@@ -243,7 +243,7 @@ function Column({
           {getStatusLabel(status)}
         </h2>
 
-        <span className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-slate-600 shadow-sm">
+        <span className="ui-badge-soft">
           {filtered.length}
         </span>
       </div>
@@ -364,7 +364,7 @@ function CardContent({
         </div>
 
         {app.source ? (
-          <span className="shrink-0 rounded-full bg-slate-100 px-2 py-1 text-[10px] font-semibold text-slate-600">
+          <span className="ui-badge-neutral shrink-0">
             {app.source}
           </span>
         ) : null}

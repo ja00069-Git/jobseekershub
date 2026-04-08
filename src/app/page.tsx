@@ -60,13 +60,13 @@ export default async function DashboardPage() {
           <>
             <Link
               href="/applications"
-              className="rounded-xl bg-slate-900 px-3.5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+              className="ui-btn-primary"
             >
               Applications
             </Link>
             <Link
               href="/review"
-              className="rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              className="ui-btn-secondary"
             >
               Emails to review ({pendingImports})
             </Link>
@@ -124,7 +124,7 @@ export default async function DashboardPage() {
                         {application.company}
                       </p>
                     </div>
-                    <span className="rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-600">
+                    <span className="ui-badge-soft">
                       {getStatusLabel(application.status)}
                     </span>
                   </div>

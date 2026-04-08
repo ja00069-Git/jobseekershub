@@ -35,3 +35,33 @@ body {
 ::selection {
   background: rgba(59, 130, 246, 0.18);
 }
+
+@layer components {
+  .ui-btn-primary {
+    @apply inline-flex h-10 min-h-10 shrink-0 whitespace-nowrap items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .ui-btn-secondary {
+    @apply inline-flex h-10 min-h-10 shrink-0 whitespace-nowrap items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .ui-btn-link {
+    @apply inline-flex h-10 shrink-0 whitespace-nowrap items-center text-sm font-semibold text-slate-600 underline-offset-4 transition hover:text-slate-900 hover:underline;
+  }
+
+  .ui-icon-btn {
+    @apply inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-100;
+  }
+
+  .ui-badge {
+    @apply inline-flex min-h-6 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold leading-none;
+  }
+
+  .ui-badge-neutral {
+    @apply inline-flex min-h-6 items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold leading-none text-slate-700;
+  }
+
+  .ui-badge-soft {
+    @apply inline-flex min-h-6 items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-xs font-semibold leading-none text-slate-600 ring-1 ring-inset ring-slate-200 shadow-sm;
+  }
+}

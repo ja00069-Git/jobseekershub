@@ -28,45 +28,47 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`hidden shrink-0 border-r border-slate-200/80 bg-white/90 p-3 transition-all duration-200 lg:flex lg:flex-col ${
+      className={`sticky top-0 hidden h-screen shrink-0 border-r border-slate-200/80 bg-white/75 p-3 backdrop-blur-xl transition-all duration-200 lg:flex lg:flex-col ${
         collapsed ? "w-20" : "w-64"
       }`}
     >
-      <div
-        className={`mb-4 flex gap-2 ${
-          collapsed ? "justify-center" : "items-center justify-between"
-        }`}
-      >
-        {!collapsed ? (
-          <div className="flex items-center gap-3 overflow-hidden">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-900 text-sm font-bold text-white">
-              JH
-            </div>
-            <div>
-              <h1 className="text-base font-semibold text-slate-900">JobHuntHQ</h1>
-              <p className="text-xs text-slate-500">Applications, emails, resumes</p>
-            </div>
-          </div>
-        ) : null}
-
-        <button
-          type="button"
-          onClick={() => setCollapsed((current) => !current)}
-          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-100"
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+      <div className="mb-4 rounded-2xl border border-slate-200/80 bg-white/80 p-2.5 shadow-sm">
+        <div
+          className={`flex gap-2 ${
+            collapsed ? "justify-center" : "items-center justify-between"
+          }`}
         >
-          {collapsed ? (
-            <FiChevronsRight className="h-4 w-4" />
-          ) : (
-            <FiChevronsLeft className="h-4 w-4" />
-          )}
-        </button>
+          {!collapsed ? (
+            <div className="flex items-center gap-3 overflow-hidden">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-sm font-bold text-white shadow-sm ring-4 ring-blue-100/70">
+                JH
+              </div>
+              <div>
+                <h1 className="text-base font-semibold text-slate-900">JobHuntHQ</h1>
+                <p className="text-xs text-slate-500">Applications, emails, resumes</p>
+              </div>
+            </div>
+          ) : null}
+
+          <button
+            type="button"
+            onClick={() => setCollapsed((current) => !current)}
+            className="ui-icon-btn shrink-0"
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? (
+              <FiChevronsRight className="h-4 w-4" />
+            ) : (
+              <FiChevronsLeft className="h-4 w-4" />
+            )}
+          </button>
+        </div>
       </div>
 
-      <nav className="space-y-1.5">
+      <nav className="space-y-1.5 rounded-2xl border border-slate-200/80 bg-white/70 p-2 shadow-sm">
         {!collapsed ? (
-          <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400">
+          <p className="px-2.5 pb-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">
             Menu
           </p>
         ) : null}
@@ -84,7 +86,7 @@ export default function Sidebar() {
                 collapsed ? "justify-center px-0" : "gap-3"
               } ${
                 active
-                  ? "bg-slate-900 text-white shadow-sm"
+                  ? "bg-blue-600 text-white shadow-sm"
                   : "text-slate-700 hover:bg-slate-100"
               }`}
             >

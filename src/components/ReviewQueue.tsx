@@ -141,7 +141,7 @@ export default function ReviewQueue() {
           type="button"
           onClick={() => void loadQueue()}
           disabled={loading}
-          className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+          className="ui-btn-secondary"
         >
           {loading ? "Refreshing..." : "Refresh"}
         </button>
@@ -153,7 +153,7 @@ export default function ReviewQueue() {
           <button
             type="button"
             onClick={() => void loadQueue()}
-            className="rounded-lg border border-rose-200 bg-white px-3 py-1.5 font-medium text-rose-700 transition hover:bg-rose-100"
+            className="ui-btn-secondary text-rose-700 hover:bg-rose-50"
           >
             Retry
           </button>
@@ -244,11 +244,11 @@ function Card({
         </div>
 
         <div className="flex flex-wrap gap-2 text-xs">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-700">
+          <span className="ui-badge-neutral">
             <FiBriefcase className="h-3.5 w-3.5" />
             {email.source || "Email"}
           </span>
-          <span className="break-all inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-700">
+          <span className="ui-badge-neutral break-all">
             <FiMail className="h-3.5 w-3.5" />
             {email.from}
           </span>
@@ -304,7 +304,7 @@ function Card({
               type="button"
               onClick={() => void onReject(email.id)}
               disabled={isApproving || isRejecting}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
+              className="ui-btn-secondary border-slate-300"
             >
               <FiXCircle className="h-4 w-4" />
               {isRejecting ? "Rejecting..." : "Reject"}
@@ -319,7 +319,7 @@ function Card({
                 })
               }
               disabled={!canApprove || isApproving || isRejecting}
-              className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-300"
+              className="ui-btn-primary disabled:bg-slate-300"
             >
               <FiCheckCircle className="h-4 w-4" />
               {isApproving ? "Saving..." : "Save to applications"}

@@ -113,7 +113,7 @@ export default function ApplicationForm({
             setErrorMessage("");
             setSuccessMessage("");
           }}
-          className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+          className="ui-btn-primary min-w-[160px]"
         >
           <FiPlus className="h-4 w-4" />
           Add application
@@ -146,7 +146,7 @@ export default function ApplicationForm({
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:bg-slate-100"
+                  className="ui-icon-btn text-slate-500"
                   aria-label="Close form"
                 >
                   <FiX className="h-4 w-4" />
@@ -255,7 +255,7 @@ export default function ApplicationForm({
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                  className="ui-btn-secondary"
                 >
                   Cancel
                 </button>
@@ -263,7 +263,7 @@ export default function ApplicationForm({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+                  className="ui-btn-primary"
                 >
                   <FiSave className="h-4 w-4" />
                   {isSubmitting ? "Saving..." : "Save application"}

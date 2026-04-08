@@ -93,7 +93,7 @@ export default function GmailSyncButton() {
       <button
         type="button"
         onClick={() => void signIn("google", { callbackUrl: "/review" })}
-        className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+        className="ui-btn-primary"
       >
         Connect Gmail
       </button>
@@ -112,7 +112,7 @@ export default function GmailSyncButton() {
         type="button"
         onClick={() => void syncGmail()}
         disabled={isSyncing}
-        className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+        className="ui-btn-primary"
       >
         <span
           className={`inline-block h-2.5 w-2.5 rounded-full ${

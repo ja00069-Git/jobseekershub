@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 const Sidebar = dynamic(() => import("./Sidebar"), {
   ssr: false,
   loading: () => (
-    <aside className="hidden w-20 shrink-0 border-r border-slate-200 bg-white lg:flex lg:flex-col" />
+    <aside className="sticky top-0 hidden h-screen w-20 shrink-0 border-r border-slate-200/80 bg-white/75 backdrop-blur-xl lg:flex lg:flex-col" />
   ),
 });
 

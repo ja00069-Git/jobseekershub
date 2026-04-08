@@ -49,7 +49,7 @@ export default function PageHeader({
               {badges.map((badge) => (
                 <span
                   key={String(badge.label)}
-                  className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${badgeToneClasses[badge.tone ?? "slate"]}`}
+                  className={`ui-badge ${badgeToneClasses[badge.tone ?? "slate"]}`}
                 >
                   {badge.label}
                 </span>

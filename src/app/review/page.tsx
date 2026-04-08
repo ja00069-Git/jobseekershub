@@ -22,7 +22,7 @@ export default async function ReviewPage() {
             <GmailSyncButton />
             <Link
               href="/applications"
-              className="text-sm font-medium text-slate-600 underline-offset-4 transition hover:text-slate-900 hover:underline"
+              className="ui-btn-link"
             >
               Back to applications
             </Link>

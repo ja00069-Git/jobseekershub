@@ -84,7 +84,7 @@ export default async function CompaniesPage() {
                   </p>
                 </div>
 
-                <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                <span className="ui-badge-neutral">
                   {company._count.applications} applications
                 </span>
               </div>
@@ -114,7 +114,7 @@ export default async function CompaniesPage() {
                             Resume used: {application.resume?.name ?? "Not assigned"}
                           </p>
                         </div>
-                        <span className="rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-600">
+                        <span className="ui-badge-soft">
                           {getStatusLabel(application.status)}
                         </span>
                       </div>

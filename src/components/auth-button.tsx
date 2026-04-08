@@ -96,7 +96,7 @@ export default function AuthButton() {
             <button
               type="button"
               onClick={() => void signOut()}
-              className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              className="ui-btn-secondary mt-3 w-full"
               role="menuitem"
             >
               <FiLogOut className="h-4 w-4" />
@@ -112,7 +112,7 @@ export default function AuthButton() {
     <button
       type="button"
       onClick={() => void signIn("google")}
-      className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-md"
+      className="ui-btn-secondary text-slate-900 hover:-translate-y-0.5 hover:shadow-md"
     >
       <svg
         aria-hidden="true"
