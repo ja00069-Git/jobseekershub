@@ -120,15 +120,49 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.CompanyScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  website: 'website',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ResumeScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  fileUrl: 'fileUrl',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.ApplicationScalarFieldEnum = {
   id: 'id',
   company: 'company',
   role: 'role',
   status: 'status',
   location: 'location',
+  source: 'source',
   salary: 'salary',
+  jobUrl: 'jobUrl',
   dateApplied: 'dateApplied',
   notes: 'notes',
+  gmailId: 'gmailId',
+  companyId: 'companyId',
+  resumeId: 'resumeId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ImportedEmailScalarFieldEnum = {
+  id: 'id',
+  gmailId: 'gmailId',
+  subject: 'subject',
+  from: 'from',
+  snippet: 'snippet',
+  company: 'company',
+  role: 'role',
+  source: 'source',
+  status: 'status',
+  score: 'score',
+  reviewed: 'reviewed',
   createdAt: 'createdAt'
 };
 
@@ -157,7 +191,10 @@ exports.Status = exports.$Enums.Status = {
 };
 
 exports.Prisma.ModelName = {
-  Application: 'Application'
+  Company: 'Company',
+  Resume: 'Resume',
+  Application: 'Application',
+  ImportedEmail: 'ImportedEmail'
 };
 
 /**

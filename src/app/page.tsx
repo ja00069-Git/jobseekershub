@@ -1,136 +1,217 @@
-import ApplicationForm from "@/components/applicationForm";
-import ApplicationList from "@/components/applicationList";
-import AuthButton from "@/components/auth-button";
-import KanbanBoard from "@/components/kanbanBoard";
+import Link from "next/link";
+import { FiArrowRight, FiBriefcase, FiFileText, FiInbox, FiPercent, FiTarget, FiTrendingUp, FiXCircle } from "react-icons/fi";
+import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
 
-type Application = {
-  id: string;
-  company: string;
-  role: string;
-  status: string;
-  location?: string | null;
-  createdAt: string;
-};
+import { getStatusLabel } from "@/lib/application-status";
+import { prisma } from "@/lib/prisma";
 
-async function getApplications() {
-  const res = await fetch("http://localhost:3000/api/applications", {
-    cache: "no-store",
-  });
+export const dynamic = "force-dynamic";
 
-  if (!res.ok) {
-    return [] as Application[];
-  }
+export default async function DashboardPage() {
+  const [applications, pendingImports, companies, resumes] = await Promise.all([
+    prisma.application.findMany({
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.importedEmail.count({
+      where: { reviewed: false },
+    }),
+    prisma.company.count(),
+    prisma.resume.count(),
+  ]);
 
-  return (await res.json()) as Application[];
-}
+  const total = applications.length;
+  const active = applications.filter(
+    (application) =>
+      !["offer", "rejected", "withdrawn"].includes(application.status),
+  ).length;
+  const interviews = applications.filter((application) =>
+    ["phone", "interview"].includes(application.status),
+  ).length;
+  const offers = applications.filter(
+    (application) => application.status === "offer",
+  ).length;
+  const rejected = applications.filter(
+    (application) => application.status === "rejected",
+  ).length;
+  const interviewRate = total > 0 ? Math.round((interviews / total) * 100) : 0;
 
-export default async function Home() {
-  const applications = await getApplications();
-
-  const stats = [
-    {
-      label: "Total tracked",
-      value: applications.length,
-    },
-    {
-      label: "Active pipeline",
-      value: applications.filter(
-        (application) =>
-          !["offer", "rejected", "withdrawn"].includes(application.status),
-      ).length,
-    },
-    {
-      label: "Interviewing",
-      value: applications.filter((application) =>
-        ["phone", "interview"].includes(application.status),
-      ).length,
-    },
-    {
-      label: "Offers",
-      value: applications.filter((application) => application.status === "offer")
-        .length,
-    },
-  ];
+  const recentApplications = applications.slice(0, 4);
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8">
-        <section className="overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-900 p-6 text-white shadow-xl sm:p-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-2xl space-y-3">
-              <span className="inline-flex rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-blue-100">
-                Job pipeline dashboard
-              </span>
-              <div className="space-y-2">
-                <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-                  Stay on top of every job application in one place.
-                </h1>
-                <p className="max-w-xl text-sm text-slate-300 sm:text-base">
-                  Track outreach, interview progress, and offers with a cleaner
-                  board plus a detailed table view.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-stretch gap-4 lg:items-end">
-              <AuthButton />
-
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                {stats.map((stat) => (
-                  <div
-                    key={stat.label}
-                    className="rounded-2xl border border-white/10 bg-white/10 px-4 py-3 backdrop-blur"
-                  >
-                    <p className="text-2xl font-semibold">{stat.value}</p>
-                    <p className="mt-1 text-xs text-slate-300">{stat.label}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+    <div className="mx-auto max-w-7xl space-y-6">
+      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-600">
+              Job search dashboard
+            </p>
+            <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+              Run your search like a modern career operating system
+            </h1>
+            <p className="mt-2 text-sm text-slate-600">
+              Track active roles, review Gmail imports, organize company history, and keep resume versions ready for every application.
+            </p>
           </div>
-        </section>
 
-        <section className="grid gap-6 xl:grid-cols-[400px_minmax(0,1fr)] xl:items-start">
-          <div className="space-y-6 xl:sticky xl:top-6">
-            <ApplicationForm />
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/applications"
+              className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+            >
+              Open board
+            </Link>
+            <Link
+              href="/review"
+              className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            >
+              Review imports ({pendingImports})
+            </Link>
+          </div>
+        </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="mt-5 flex flex-wrap gap-3 text-sm text-slate-600">
+          <span className="rounded-full bg-slate-100 px-3 py-1">{companies} companies tracked</span>
+          <span className="rounded-full bg-slate-100 px-3 py-1">{resumes} resume versions saved</span>
+        </div>
+      </section>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-6">
+        <Card title="Total tracked" value={total} tone="slate" icon={<FiBriefcase className="h-4 w-4" />} />
+        <Card title="Active pipeline" value={active} tone="blue" icon={<FiTarget className="h-4 w-4" />} />
+        <Card title="Interviewing" value={interviews} tone="amber" icon={<FiTrendingUp className="h-4 w-4" />} />
+        <Card title="Offers" value={offers} tone="emerald" icon={<FiInbox className="h-4 w-4" />} />
+        <Card title="Rejected" value={rejected} tone="rose" icon={<FiXCircle className="h-4 w-4" />} />
+        <Card title="Interview rate" value={interviewRate} suffix="%" tone="violet" icon={<FiPercent className="h-4 w-4" />} />
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-[1.5fr_1fr]">
+        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div>
               <h2 className="text-lg font-semibold text-slate-900">
-                Quick workflow tips
+                Recent applications
               </h2>
-              <ul className="mt-3 space-y-2 text-sm text-slate-600">
-                <li>• Start promising leads in <strong>Wishlist</strong>.</li>
-                <li>• Use <strong>Phone</strong> and <strong>Interview</strong> to track active loops.</li>
-                <li>• Keep notes updated so follow-ups are easy.</li>
-              </ul>
+              <p className="text-sm text-slate-500">
+                A quick view of the latest roles in your tracker.
+              </p>
             </div>
+
+            <Link
+              href="/applications"
+              className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:underline"
+            >
+              View full board
+              <FiArrowRight className="h-4 w-4" />
+            </Link>
           </div>
 
-          <div className="space-y-6">
-            <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-              <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <h2 className="text-xl font-semibold text-slate-900">
-                    Kanban pipeline
-                  </h2>
-                  <p className="text-sm text-slate-500">
-                    A quick visual view of where each application currently sits.
+          {recentApplications.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-sm text-slate-500">
+              No applications yet. Sync Gmail or add one from the board to get started.
+            </div>
+          ) : (
+            <div className="grid gap-3 md:grid-cols-2">
+              {recentApplications.map((application) => (
+                <div
+                  key={application.id}
+                  className="rounded-2xl border border-slate-200 bg-slate-50 p-4"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900">
+                        {application.role}
+                      </p>
+                      <p className="mt-1 text-sm text-slate-600">
+                        {application.company}
+                      </p>
+                    </div>
+                    <span className="rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-600">
+                      {getStatusLabel(application.status)}
+                    </span>
+                  </div>
+                  <p className="mt-3 text-xs text-slate-500">
+                    {application.source || "Manual entry"}
                   </p>
                 </div>
-                <span className="inline-flex w-fit rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
-                  {applications.length} cards
-                </span>
-              </div>
+              ))}
+            </div>
+          )}
+        </section>
 
-              <KanbanBoard applications={applications} />
-            </section>
-
-            <section>
-              <ApplicationList applications={applications} />
-            </section>
+        <section className="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900">Workspace shortcuts</h2>
+            <p className="text-sm text-slate-500">
+              Jump into the parts of the product that need attention next.
+            </p>
           </div>
+
+          <Shortcut href="/companies" label="Companies" description="View company history and application counts." icon={<HiOutlineBuildingOffice2 className="h-5 w-5" />} />
+          <Shortcut href="/resumes" label="Resumes" description="Manage versions for future submissions." icon={<FiFileText className="h-5 w-5" />} />
+          <Shortcut href="/review" label="Review queue" description={`${pendingImports} imports are waiting for approval.`} icon={<FiInbox className="h-5 w-5" />} />
         </section>
       </div>
-    </main>
+    </div>
+  );
+}
+
+function Card({
+  title,
+  value,
+  tone,
+  icon,
+  suffix = "",
+}: {
+  title: string;
+  value: number;
+  tone: "slate" | "blue" | "amber" | "emerald" | "rose" | "violet";
+  icon: React.ReactNode;
+  suffix?: string;
+}) {
+  const toneClasses = {
+    slate: "bg-slate-50 text-slate-700",
+    blue: "bg-blue-50 text-blue-700",
+    amber: "bg-amber-50 text-amber-700",
+    emerald: "bg-emerald-50 text-emerald-700",
+    rose: "bg-rose-50 text-rose-700",
+    violet: "bg-violet-50 text-violet-700",
+  } as const;
+
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm text-slate-500">{title}</p>
+        <span className={`rounded-full p-2 ${toneClasses[tone]}`}>{icon}</span>
+      </div>
+      <div className="mt-3 flex items-end gap-1">
+        <h2 className="text-3xl font-bold text-slate-900">{value}</h2>
+        {suffix ? <span className="pb-1 text-sm font-semibold text-slate-500">{suffix}</span> : null}
+      </div>
+    </div>
+  );
+}
+
+function Shortcut({
+  href,
+  label,
+  description,
+  icon,
+}: {
+  href: string;
+  label: string;
+  description: string;
+  icon: React.ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:-translate-y-0.5 hover:bg-white hover:shadow-sm"
+    >
+      <span className="rounded-xl bg-white p-2 text-slate-700 shadow-sm">{icon}</span>
+      <span>
+        <span className="block text-sm font-semibold text-slate-900">{label}</span>
+        <span className="mt-1 block text-sm text-slate-500">{description}</span>
+      </span>
+    </Link>
   );
 }

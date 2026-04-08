@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { FiExternalLink, FiFileText, FiSave } from "react-icons/fi";
 
 import {
   APPLICATION_STATUS_OPTIONS,
@@ -12,14 +13,26 @@ const getTodayDate = () => new Date().toISOString().split("T")[0] ?? "";
 const fieldClassName =
   "w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-blue-100";
 
-export default function ApplicationForm() {
+type ResumeOption = {
+  id: string;
+  name: string;
+};
+
+export default function ApplicationForm({
+  resumes = [],
+}: {
+  resumes?: ResumeOption[];
+}) {
   const router = useRouter();
   const [company, setCompany] = useState("");
   const [role, setRole] = useState("");
   const [status, setStatus] = useState<ApplicationStatus>("applied");
   const [location, setLocation] = useState("");
+  const [source, setSource] = useState("");
+  const [jobUrl, setJobUrl] = useState("");
   const [dateApplied, setDateApplied] = useState("");
   const [salary, setSalary] = useState("");
+  const [resumeId, setResumeId] = useState("");
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -46,8 +59,11 @@ export default function ApplicationForm() {
           role,
           status,
           location,
+          source,
+          jobUrl,
           dateApplied,
           salary,
+          resumeId,
           notes,
         }),
       });
@@ -65,8 +81,11 @@ export default function ApplicationForm() {
       setRole("");
       setStatus("applied");
       setLocation("");
+      setSource("");
+      setJobUrl("");
       setDateApplied(getTodayDate());
       setSalary("");
+      setResumeId("");
       setNotes("");
       router.refresh();
     } catch (error) {
@@ -92,12 +111,13 @@ export default function ApplicationForm() {
             Log an opportunity
           </h2>
           <p className="mt-1 text-sm text-slate-500">
-            Add a role, current stage, and notes so your pipeline stays tidy.
+            Capture the role, source, resume version, and next-step notes in one place.
           </p>
         </div>
 
-        <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-          Live sync
+        <span className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+          <FiSave className="h-3.5 w-3.5" />
+          Manual entry
         </span>
       </div>
 
@@ -140,7 +160,7 @@ export default function ApplicationForm() {
         </label>
 
         <label className="space-y-1.5">
-          <span className="text-sm font-medium text-slate-700">Date Applied</span>
+          <span className="text-sm font-medium text-slate-700">Date applied</span>
           <input
             type="date"
             className={fieldClassName}
@@ -150,13 +170,37 @@ export default function ApplicationForm() {
           />
         </label>
 
-        <label className="space-y-1.5 sm:col-span-2">
+        <label className="space-y-1.5">
           <span className="text-sm font-medium text-slate-700">Location</span>
           <input
             className={fieldClassName}
             placeholder="Remote or onsite"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
+          />
+        </label>
+
+        <label className="space-y-1.5">
+          <span className="text-sm font-medium text-slate-700">Source</span>
+          <input
+            className={fieldClassName}
+            placeholder="LinkedIn, referral, Indeed..."
+            value={source}
+            onChange={(e) => setSource(e.target.value)}
+          />
+        </label>
+
+        <label className="space-y-1.5 sm:col-span-2">
+          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-700">
+            <FiExternalLink className="h-4 w-4" />
+            Job URL
+          </span>
+          <input
+            type="url"
+            className={fieldClassName}
+            placeholder="https://company.com/jobs/example"
+            value={jobUrl}
+            onChange={(e) => setJobUrl(e.target.value)}
           />
         </label>
 
@@ -170,6 +214,25 @@ export default function ApplicationForm() {
             value={salary}
             onChange={(e) => setSalary(e.target.value)}
           />
+        </label>
+
+        <label className="space-y-1.5">
+          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-700">
+            <FiFileText className="h-4 w-4" />
+            Resume version
+          </span>
+          <select
+            className={fieldClassName}
+            value={resumeId}
+            onChange={(e) => setResumeId(e.target.value)}
+          >
+            <option value="">Not selected</option>
+            {resumes.map((resume) => (
+              <option key={resume.id} value={resume.id}>
+                {resume.name}
+              </option>
+            ))}
+          </select>
         </label>
 
         <label className="space-y-1.5 sm:col-span-2">
@@ -200,13 +263,14 @@ export default function ApplicationForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
         >
+          <FiSave className="h-4 w-4" />
           {isSubmitting ? "Saving..." : "Add Application"}
         </button>
 
         <p className="text-xs text-slate-500">
-          The board and table refresh automatically after a successful save.
+          The board refreshes automatically after a successful save.
         </p>
       </div>
     </form>

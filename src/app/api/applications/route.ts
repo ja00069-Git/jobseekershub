@@ -37,9 +37,12 @@ type CreateApplicationPayload = {
   role?: unknown;
   status?: unknown;
   location?: unknown;
+  source?: unknown;
   salary?: unknown;
+  jobUrl?: unknown;
   dateApplied?: unknown;
   notes?: unknown;
+  resumeId?: unknown;
 };
 
 const isNonEmptyString = (value: unknown): value is string =>
@@ -50,7 +53,12 @@ const parseOptionalString = (value: unknown) => {
     return null;
   }
 
-  return typeof value === "string" ? value : null;
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const trimmedValue = value.trim();
+  return trimmedValue.length > 0 ? trimmedValue : null;
 };
 
 const parseOptionalSalary = (value: unknown) => {
@@ -148,15 +156,26 @@ export async function POST(request: Request) {
   }
 
   try {
+    const companyName = payload.company.trim();
+    const companyRecord = await prisma.company.upsert({
+      where: { name: companyName },
+      update: {},
+      create: { name: companyName },
+    });
+
     const application = await prisma.application.create({
       data: {
-        company: payload.company.trim(),
+        company: companyName,
         role: payload.role.trim(),
         status: normalizedStatus,
         location: parseOptionalString(payload.location),
+        source: parseOptionalString(payload.source),
         salary,
+        jobUrl: parseOptionalString(payload.jobUrl),
         dateApplied,
         notes: parseOptionalString(payload.notes),
+        companyId: companyRecord.id,
+        resumeId: parseOptionalString(payload.resumeId),
       },
     });
 
