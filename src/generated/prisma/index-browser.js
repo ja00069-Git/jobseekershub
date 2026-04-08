@@ -123,7 +123,6 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 exports.Prisma.CompanyScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  website: 'website',
   createdAt: 'createdAt'
 };
 
@@ -139,10 +138,7 @@ exports.Prisma.ApplicationScalarFieldEnum = {
   company: 'company',
   role: 'role',
   status: 'status',
-  location: 'location',
   source: 'source',
-  salary: 'salary',
-  jobUrl: 'jobUrl',
   dateApplied: 'dateApplied',
   notes: 'notes',
   gmailId: 'gmailId',
@@ -183,7 +179,6 @@ exports.Prisma.NullsOrder = {
 exports.Status = exports.$Enums.Status = {
   wishlist: 'wishlist',
   applied: 'applied',
-  phone: 'phone',
   interview: 'interview',
   offer: 'offer',
   rejected: 'rejected',

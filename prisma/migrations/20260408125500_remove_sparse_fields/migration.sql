@@ -1,0 +1,7 @@
+ALTER TABLE "Company"
+DROP COLUMN IF EXISTS "website";
+
+ALTER TABLE "Application"
+DROP COLUMN IF EXISTS "location",
+DROP COLUMN IF EXISTS "salary",
+DROP COLUMN IF EXISTS "jobUrl";

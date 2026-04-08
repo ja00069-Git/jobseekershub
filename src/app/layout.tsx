@@ -32,7 +32,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="bg-gray-100 text-slate-900">
+      <body className="text-slate-900">
         <AuthProvider>
           <div className="flex min-h-screen">
             <SidebarShell />
@@ -40,7 +40,7 @@ export default function RootLayout({
             <div className="flex min-h-screen flex-1 flex-col overflow-hidden">
               <TopBar />
 
-              <main className="flex-1 overflow-y-auto p-4 sm:p-6">
+              <main className="flex-1 overflow-y-auto px-3 py-3 sm:px-5 sm:py-5 lg:px-6 lg:py-6">
                 {children}
               </main>
             </div>

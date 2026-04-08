@@ -104,10 +104,10 @@ export default function ResumeManager({
   }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[420px_minmax(0,1fr)]">
+    <div className="grid gap-5 xl:grid-cols-[360px_minmax(0,1fr)]">
       <form
         onSubmit={handleSubmit}
-        className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+        className="rounded-[26px] border border-slate-200/80 bg-white p-5 shadow-sm xl:sticky xl:top-6"
       >
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-600">
           Resume library
@@ -166,7 +166,7 @@ export default function ResumeManager({
         </button>
       </form>
 
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-[26px] border border-slate-200/80 bg-white p-5 shadow-sm">
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">

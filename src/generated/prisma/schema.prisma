@@ -1,7 +1,6 @@
 enum Status {
   wishlist
   applied
-  phone
   interview
   offer
   rejected
@@ -20,7 +19,6 @@ datasource db {
 model Company {
   id           String        @id @default(cuid())
   name         String        @unique
-  website      String?
   createdAt    DateTime      @default(now())
   applications Application[]
 }
@@ -38,10 +36,7 @@ model Application {
   company     String
   role        String
   status      Status   @default(applied)
-  location    String?
   source      String?
-  salary      Int?
-  jobUrl      String?
   dateApplied DateTime
   notes       String?
   gmailId     String?  @unique

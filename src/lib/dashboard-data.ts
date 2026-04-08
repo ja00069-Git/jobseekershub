@@ -5,12 +5,18 @@ export type DashboardApplication = {
   company: string;
   role: string;
   status: string;
-  location: string | null;
   createdAt: string;
 };
 
 export async function getApplications(): Promise<DashboardApplication[]> {
   const applications = await prisma.application.findMany({
+    select: {
+      id: true,
+      company: true,
+      role: true,
+      status: true,
+      createdAt: true,
+    },
     orderBy: [{ createdAt: "desc" }],
   });
 
@@ -19,7 +25,6 @@ export async function getApplications(): Promise<DashboardApplication[]> {
     company: application.company,
     role: application.role,
     status: application.status,
-    location: application.location,
     createdAt: application.createdAt.toISOString(),
   }));
 }
@@ -39,8 +44,8 @@ export function getDashboardStats(applications: DashboardApplication[]) {
     },
     {
       label: "Interviewing",
-      value: applications.filter((application) =>
-        ["phone", "interview"].includes(application.status),
+      value: applications.filter(
+        (application) => application.status === "interview",
       ).length,
     },
     {

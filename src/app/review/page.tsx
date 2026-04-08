@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import GmailSyncButton from "@/components/gmail-sync-button";
 import ReviewQueue from "../../components/ReviewQueue";
+import PageHeader from "@/components/ui/page-header";
 import { getPendingImportsCount } from "@/lib/dashboard-data";
 
 export const dynamic = "force-dynamic";
@@ -10,27 +11,14 @@ export default async function ReviewPage() {
   const pendingImports = await getPendingImportsCount();
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
-      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-          <div className="space-y-2">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500">
-              Review
-            </p>
-            <div className="flex flex-wrap items-center gap-3">
-              <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
-                Imported emails
-              </h1>
-              <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-700">
-                {pendingImports} pending
-              </span>
-            </div>
-            <p className="text-sm text-slate-500">
-              Review and approve the emails you want added to your tracker.
-            </p>
-          </div>
-
-          <div className="flex flex-col items-start gap-3 lg:items-end">
+    <div className="mx-auto max-w-[1400px] space-y-5">
+      <PageHeader
+        eyebrow="Review"
+        title="Approve imported emails without the noise"
+        description="Confirm the company and role, then push the right emails into your application board in one pass."
+        badges={[{ label: `${pendingImports} pending`, tone: "amber" }]}
+        actions={
+          <>
             <GmailSyncButton />
             <Link
               href="/applications"
@@ -38,9 +26,9 @@ export default async function ReviewPage() {
             >
               Back to applications
             </Link>
-          </div>
-        </div>
-      </section>
+          </>
+        }
+      />
 
       <ReviewQueue />
     </div>

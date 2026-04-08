@@ -88,7 +88,6 @@ export async function POST(req: Request) {
       : null;
 
     if (!existingApplication) {
-      const location = extractLocation(email.subject, email.snippet);
       const companyName = updated.company?.trim() || "Unknown";
       const companyRecord =
         companyName !== "Unknown"
@@ -104,7 +103,6 @@ export async function POST(req: Request) {
           company: companyName,
           role: updated.role || "Unknown Role",
           status: updated.status || "applied",
-          location: location || undefined,
           source: updated.source || detectImportSource(updated.from),
           dateApplied: new Date(),
           gmailId: updated.gmailId,

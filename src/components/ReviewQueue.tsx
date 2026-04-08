@@ -8,6 +8,7 @@ type ImportedEmail = {
   id: string;
   subject: string;
   from: string;
+  snippet: string;
   company: string | null;
   role: string | null;
   location?: string | null;
@@ -123,8 +124,8 @@ export default function ReviewQueue() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between gap-3">
+    <div className="space-y-5">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
             Pending imports
@@ -132,6 +133,9 @@ export default function ReviewQueue() {
           <h2 className="mt-1 text-2xl font-semibold text-slate-900">
             {emails.length} item{emails.length === 1 ? "" : "s"} to review
           </h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Approve the real matches and clear the noise quickly.
+          </p>
         </div>
 
         <button
@@ -158,7 +162,7 @@ export default function ReviewQueue() {
       ) : null}
 
       {loading ? (
-        <div className="grid gap-4 xl:grid-cols-2">
+        <div className="grid gap-4 2xl:grid-cols-2">
           {Array.from({ length: 4 }).map((_, index) => (
             <div
               key={index}
@@ -219,14 +223,14 @@ function Card({
   const canApprove = company.trim().length > 0 && role.trim().length > 0;
 
   return (
-    <article className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-lg">
-      <div className="flex flex-col gap-4">
+    <article className="rounded-[26px] border border-slate-200/80 bg-white p-4 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-lg sm:p-5">
+      <div className="flex flex-col gap-3.5">
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-600">
               {formatStatus(email.status)}
             </p>
-            <h3 className="mt-2 text-xl font-semibold text-slate-900">
+            <h3 className="mt-2 text-lg font-semibold text-slate-900 sm:text-xl">
               {role || email.role || email.subject}
             </h3>
             <p className="mt-1 text-sm text-slate-500">
@@ -258,10 +262,13 @@ function Card({
 
         <div className="rounded-2xl bg-slate-50 p-4">
           <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500">
-            Email subject
+            Email preview
           </p>
           <p className="mt-2 text-sm font-medium text-slate-700">
             {email.subject}
+          </p>
+          <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-500">
+            {email.snippet}
           </p>
         </div>
 

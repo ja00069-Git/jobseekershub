@@ -41,7 +41,6 @@ export namespace $Enums {
   export const Status: {
   wishlist: 'wishlist',
   applied: 'applied',
-  phone: 'phone',
   interview: 'interview',
   offer: 'offer',
   rejected: 'rejected',
@@ -1235,21 +1234,18 @@ export namespace Prisma {
   export type CompanyMinAggregateOutputType = {
     id: string | null
     name: string | null
-    website: string | null
     createdAt: Date | null
   }
 
   export type CompanyMaxAggregateOutputType = {
     id: string | null
     name: string | null
-    website: string | null
     createdAt: Date | null
   }
 
   export type CompanyCountAggregateOutputType = {
     id: number
     name: number
-    website: number
     createdAt: number
     _all: number
   }
@@ -1258,21 +1254,18 @@ export namespace Prisma {
   export type CompanyMinAggregateInputType = {
     id?: true
     name?: true
-    website?: true
     createdAt?: true
   }
 
   export type CompanyMaxAggregateInputType = {
     id?: true
     name?: true
-    website?: true
     createdAt?: true
   }
 
   export type CompanyCountAggregateInputType = {
     id?: true
     name?: true
-    website?: true
     createdAt?: true
     _all?: true
   }
@@ -1352,7 +1345,6 @@ export namespace Prisma {
   export type CompanyGroupByOutputType = {
     id: string
     name: string
-    website: string | null
     createdAt: Date
     _count: CompanyCountAggregateOutputType | null
     _min: CompanyMinAggregateOutputType | null
@@ -1376,7 +1368,6 @@ export namespace Prisma {
   export type CompanySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
-    website?: boolean
     createdAt?: boolean
     applications?: boolean | Company$applicationsArgs<ExtArgs>
     _count?: boolean | CompanyCountOutputTypeDefaultArgs<ExtArgs>
@@ -1385,25 +1376,22 @@ export namespace Prisma {
   export type CompanySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
-    website?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["company"]>
 
   export type CompanySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
-    website?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["company"]>
 
   export type CompanySelectScalar = {
     id?: boolean
     name?: boolean
-    website?: boolean
     createdAt?: boolean
   }
 
-  export type CompanyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "website" | "createdAt", ExtArgs["result"]["company"]>
+  export type CompanyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt", ExtArgs["result"]["company"]>
   export type CompanyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     applications?: boolean | Company$applicationsArgs<ExtArgs>
     _count?: boolean | CompanyCountOutputTypeDefaultArgs<ExtArgs>
@@ -1419,7 +1407,6 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
-      website: string | null
       createdAt: Date
     }, ExtArgs["result"]["company"]>
     composites: {}
@@ -1847,7 +1834,6 @@ export namespace Prisma {
   interface CompanyFieldRefs {
     readonly id: FieldRef<"Company", 'String'>
     readonly name: FieldRef<"Company", 'String'>
-    readonly website: FieldRef<"Company", 'String'>
     readonly createdAt: FieldRef<"Company", 'DateTime'>
   }
     
@@ -3352,18 +3338,8 @@ export namespace Prisma {
 
   export type AggregateApplication = {
     _count: ApplicationCountAggregateOutputType | null
-    _avg: ApplicationAvgAggregateOutputType | null
-    _sum: ApplicationSumAggregateOutputType | null
     _min: ApplicationMinAggregateOutputType | null
     _max: ApplicationMaxAggregateOutputType | null
-  }
-
-  export type ApplicationAvgAggregateOutputType = {
-    salary: number | null
-  }
-
-  export type ApplicationSumAggregateOutputType = {
-    salary: number | null
   }
 
   export type ApplicationMinAggregateOutputType = {
@@ -3371,10 +3347,7 @@ export namespace Prisma {
     company: string | null
     role: string | null
     status: $Enums.Status | null
-    location: string | null
     source: string | null
-    salary: number | null
-    jobUrl: string | null
     dateApplied: Date | null
     notes: string | null
     gmailId: string | null
@@ -3388,10 +3361,7 @@ export namespace Prisma {
     company: string | null
     role: string | null
     status: $Enums.Status | null
-    location: string | null
     source: string | null
-    salary: number | null
-    jobUrl: string | null
     dateApplied: Date | null
     notes: string | null
     gmailId: string | null
@@ -3405,10 +3375,7 @@ export namespace Prisma {
     company: number
     role: number
     status: number
-    location: number
     source: number
-    salary: number
-    jobUrl: number
     dateApplied: number
     notes: number
     gmailId: number
@@ -3419,23 +3386,12 @@ export namespace Prisma {
   }
 
 
-  export type ApplicationAvgAggregateInputType = {
-    salary?: true
-  }
-
-  export type ApplicationSumAggregateInputType = {
-    salary?: true
-  }
-
   export type ApplicationMinAggregateInputType = {
     id?: true
     company?: true
     role?: true
     status?: true
-    location?: true
     source?: true
-    salary?: true
-    jobUrl?: true
     dateApplied?: true
     notes?: true
     gmailId?: true
@@ -3449,10 +3405,7 @@ export namespace Prisma {
     company?: true
     role?: true
     status?: true
-    location?: true
     source?: true
-    salary?: true
-    jobUrl?: true
     dateApplied?: true
     notes?: true
     gmailId?: true
@@ -3466,10 +3419,7 @@ export namespace Prisma {
     company?: true
     role?: true
     status?: true
-    location?: true
     source?: true
-    salary?: true
-    jobUrl?: true
     dateApplied?: true
     notes?: true
     gmailId?: true
@@ -3517,18 +3467,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: ApplicationAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: ApplicationSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: ApplicationMinAggregateInputType
@@ -3559,8 +3497,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: ApplicationCountAggregateInputType | true
-    _avg?: ApplicationAvgAggregateInputType
-    _sum?: ApplicationSumAggregateInputType
     _min?: ApplicationMinAggregateInputType
     _max?: ApplicationMaxAggregateInputType
   }
@@ -3570,10 +3506,7 @@ export namespace Prisma {
     company: string
     role: string
     status: $Enums.Status
-    location: string | null
     source: string | null
-    salary: number | null
-    jobUrl: string | null
     dateApplied: Date
     notes: string | null
     gmailId: string | null
@@ -3581,8 +3514,6 @@ export namespace Prisma {
     resumeId: string | null
     createdAt: Date
     _count: ApplicationCountAggregateOutputType | null
-    _avg: ApplicationAvgAggregateOutputType | null
-    _sum: ApplicationSumAggregateOutputType | null
     _min: ApplicationMinAggregateOutputType | null
     _max: ApplicationMaxAggregateOutputType | null
   }
@@ -3606,10 +3537,7 @@ export namespace Prisma {
     company?: boolean
     role?: boolean
     status?: boolean
-    location?: boolean
     source?: boolean
-    salary?: boolean
-    jobUrl?: boolean
     dateApplied?: boolean
     notes?: boolean
     gmailId?: boolean
@@ -3625,10 +3553,7 @@ export namespace Prisma {
     company?: boolean
     role?: boolean
     status?: boolean
-    location?: boolean
     source?: boolean
-    salary?: boolean
-    jobUrl?: boolean
     dateApplied?: boolean
     notes?: boolean
     gmailId?: boolean
@@ -3644,10 +3569,7 @@ export namespace Prisma {
     company?: boolean
     role?: boolean
     status?: boolean
-    location?: boolean
     source?: boolean
-    salary?: boolean
-    jobUrl?: boolean
     dateApplied?: boolean
     notes?: boolean
     gmailId?: boolean
@@ -3663,10 +3585,7 @@ export namespace Prisma {
     company?: boolean
     role?: boolean
     status?: boolean
-    location?: boolean
     source?: boolean
-    salary?: boolean
-    jobUrl?: boolean
     dateApplied?: boolean
     notes?: boolean
     gmailId?: boolean
@@ -3675,7 +3594,7 @@ export namespace Prisma {
     createdAt?: boolean
   }
 
-  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "company" | "role" | "status" | "location" | "source" | "salary" | "jobUrl" | "dateApplied" | "notes" | "gmailId" | "companyId" | "resumeId" | "createdAt", ExtArgs["result"]["application"]>
+  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "company" | "role" | "status" | "source" | "dateApplied" | "notes" | "gmailId" | "companyId" | "resumeId" | "createdAt", ExtArgs["result"]["application"]>
   export type ApplicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     companyRef?: boolean | Application$companyRefArgs<ExtArgs>
     resume?: boolean | Application$resumeArgs<ExtArgs>
@@ -3700,10 +3619,7 @@ export namespace Prisma {
       company: string
       role: string
       status: $Enums.Status
-      location: string | null
       source: string | null
-      salary: number | null
-      jobUrl: string | null
       dateApplied: Date
       notes: string | null
       gmailId: string | null
@@ -4139,10 +4055,7 @@ export namespace Prisma {
     readonly company: FieldRef<"Application", 'String'>
     readonly role: FieldRef<"Application", 'String'>
     readonly status: FieldRef<"Application", 'Status'>
-    readonly location: FieldRef<"Application", 'String'>
     readonly source: FieldRef<"Application", 'String'>
-    readonly salary: FieldRef<"Application", 'Int'>
-    readonly jobUrl: FieldRef<"Application", 'String'>
     readonly dateApplied: FieldRef<"Application", 'DateTime'>
     readonly notes: FieldRef<"Application", 'String'>
     readonly gmailId: FieldRef<"Application", 'String'>
@@ -5748,7 +5661,6 @@ export namespace Prisma {
   export const CompanyScalarFieldEnum: {
     id: 'id',
     name: 'name',
-    website: 'website',
     createdAt: 'createdAt'
   };
 
@@ -5770,10 +5682,7 @@ export namespace Prisma {
     company: 'company',
     role: 'role',
     status: 'status',
-    location: 'location',
     source: 'source',
-    salary: 'salary',
-    jobUrl: 'jobUrl',
     dateApplied: 'dateApplied',
     notes: 'notes',
     gmailId: 'gmailId',
@@ -5918,7 +5827,6 @@ export namespace Prisma {
     NOT?: CompanyWhereInput | CompanyWhereInput[]
     id?: StringFilter<"Company"> | string
     name?: StringFilter<"Company"> | string
-    website?: StringNullableFilter<"Company"> | string | null
     createdAt?: DateTimeFilter<"Company"> | Date | string
     applications?: ApplicationListRelationFilter
   }
@@ -5926,7 +5834,6 @@ export namespace Prisma {
   export type CompanyOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
-    website?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     applications?: ApplicationOrderByRelationAggregateInput
   }
@@ -5937,7 +5844,6 @@ export namespace Prisma {
     AND?: CompanyWhereInput | CompanyWhereInput[]
     OR?: CompanyWhereInput[]
     NOT?: CompanyWhereInput | CompanyWhereInput[]
-    website?: StringNullableFilter<"Company"> | string | null
     createdAt?: DateTimeFilter<"Company"> | Date | string
     applications?: ApplicationListRelationFilter
   }, "id" | "name">
@@ -5945,7 +5851,6 @@ export namespace Prisma {
   export type CompanyOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
-    website?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: CompanyCountOrderByAggregateInput
     _max?: CompanyMaxOrderByAggregateInput
@@ -5958,7 +5863,6 @@ export namespace Prisma {
     NOT?: CompanyScalarWhereWithAggregatesInput | CompanyScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Company"> | string
     name?: StringWithAggregatesFilter<"Company"> | string
-    website?: StringNullableWithAggregatesFilter<"Company"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Company"> | Date | string
   }
 
@@ -6020,10 +5924,7 @@ export namespace Prisma {
     company?: StringFilter<"Application"> | string
     role?: StringFilter<"Application"> | string
     status?: EnumStatusFilter<"Application"> | $Enums.Status
-    location?: StringNullableFilter<"Application"> | string | null
     source?: StringNullableFilter<"Application"> | string | null
-    salary?: IntNullableFilter<"Application"> | number | null
-    jobUrl?: StringNullableFilter<"Application"> | string | null
     dateApplied?: DateTimeFilter<"Application"> | Date | string
     notes?: StringNullableFilter<"Application"> | string | null
     gmailId?: StringNullableFilter<"Application"> | string | null
@@ -6039,10 +5940,7 @@ export namespace Prisma {
     company?: SortOrder
     role?: SortOrder
     status?: SortOrder
-    location?: SortOrderInput | SortOrder
     source?: SortOrderInput | SortOrder
-    salary?: SortOrderInput | SortOrder
-    jobUrl?: SortOrderInput | SortOrder
     dateApplied?: SortOrder
     notes?: SortOrderInput | SortOrder
     gmailId?: SortOrderInput | SortOrder
@@ -6062,10 +5960,7 @@ export namespace Prisma {
     company?: StringFilter<"Application"> | string
     role?: StringFilter<"Application"> | string
     status?: EnumStatusFilter<"Application"> | $Enums.Status
-    location?: StringNullableFilter<"Application"> | string | null
     source?: StringNullableFilter<"Application"> | string | null
-    salary?: IntNullableFilter<"Application"> | number | null
-    jobUrl?: StringNullableFilter<"Application"> | string | null
     dateApplied?: DateTimeFilter<"Application"> | Date | string
     notes?: StringNullableFilter<"Application"> | string | null
     companyId?: StringNullableFilter<"Application"> | string | null
@@ -6080,10 +5975,7 @@ export namespace Prisma {
     company?: SortOrder
     role?: SortOrder
     status?: SortOrder
-    location?: SortOrderInput | SortOrder
     source?: SortOrderInput | SortOrder
-    salary?: SortOrderInput | SortOrder
-    jobUrl?: SortOrderInput | SortOrder
     dateApplied?: SortOrder
     notes?: SortOrderInput | SortOrder
     gmailId?: SortOrderInput | SortOrder
@@ -6091,10 +5983,8 @@ export namespace Prisma {
     resumeId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: ApplicationCountOrderByAggregateInput
-    _avg?: ApplicationAvgOrderByAggregateInput
     _max?: ApplicationMaxOrderByAggregateInput
     _min?: ApplicationMinOrderByAggregateInput
-    _sum?: ApplicationSumOrderByAggregateInput
   }
 
   export type ApplicationScalarWhereWithAggregatesInput = {
@@ -6105,10 +5995,7 @@ export namespace Prisma {
     company?: StringWithAggregatesFilter<"Application"> | string
     role?: StringWithAggregatesFilter<"Application"> | string
     status?: EnumStatusWithAggregatesFilter<"Application"> | $Enums.Status
-    location?: StringNullableWithAggregatesFilter<"Application"> | string | null
     source?: StringNullableWithAggregatesFilter<"Application"> | string | null
-    salary?: IntNullableWithAggregatesFilter<"Application"> | number | null
-    jobUrl?: StringNullableWithAggregatesFilter<"Application"> | string | null
     dateApplied?: DateTimeWithAggregatesFilter<"Application"> | Date | string
     notes?: StringNullableWithAggregatesFilter<"Application"> | string | null
     gmailId?: StringNullableWithAggregatesFilter<"Application"> | string | null
@@ -6209,7 +6096,6 @@ export namespace Prisma {
   export type CompanyCreateInput = {
     id?: string
     name: string
-    website?: string | null
     createdAt?: Date | string
     applications?: ApplicationCreateNestedManyWithoutCompanyRefInput
   }
@@ -6217,7 +6103,6 @@ export namespace Prisma {
   export type CompanyUncheckedCreateInput = {
     id?: string
     name: string
-    website?: string | null
     createdAt?: Date | string
     applications?: ApplicationUncheckedCreateNestedManyWithoutCompanyRefInput
   }
@@ -6225,7 +6110,6 @@ export namespace Prisma {
   export type CompanyUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    website?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     applications?: ApplicationUpdateManyWithoutCompanyRefNestedInput
   }
@@ -6233,7 +6117,6 @@ export namespace Prisma {
   export type CompanyUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    website?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     applications?: ApplicationUncheckedUpdateManyWithoutCompanyRefNestedInput
   }
@@ -6241,21 +6124,18 @@ export namespace Prisma {
   export type CompanyCreateManyInput = {
     id?: string
     name: string
-    website?: string | null
     createdAt?: Date | string
   }
 
   export type CompanyUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    website?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CompanyUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    website?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -6317,10 +6197,7 @@ export namespace Prisma {
     company: string
     role: string
     status?: $Enums.Status
-    location?: string | null
     source?: string | null
-    salary?: number | null
-    jobUrl?: string | null
     dateApplied: Date | string
     notes?: string | null
     gmailId?: string | null
@@ -6334,10 +6211,7 @@ export namespace Prisma {
     company: string
     role: string
     status?: $Enums.Status
-    location?: string | null
     source?: string | null
-    salary?: number | null
-    jobUrl?: string | null
     dateApplied: Date | string
     notes?: string | null
     gmailId?: string | null
@@ -6351,10 +6225,7 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
-    location?: NullableStringFieldUpdateOperationsInput | string | null
     source?: NullableStringFieldUpdateOperationsInput | string | null
-    salary?: NullableIntFieldUpdateOperationsInput | number | null
-    jobUrl?: NullableStringFieldUpdateOperationsInput | string | null
     dateApplied?: DateTimeFieldUpdateOperationsInput | Date | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     gmailId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -6368,10 +6239,7 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
-    location?: NullableStringFieldUpdateOperationsInput | string | null
     source?: NullableStringFieldUpdateOperationsInput | string | null
-    salary?: NullableIntFieldUpdateOperationsInput | number | null
-    jobUrl?: NullableStringFieldUpdateOperationsInput | string | null
     dateApplied?: DateTimeFieldUpdateOperationsInput | Date | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     gmailId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -6385,10 +6253,7 @@ export namespace Prisma {
     company: string
     role: string
     status?: $Enums.Status
-    location?: string | null
     source?: string | null
-    salary?: number | null
-    jobUrl?: string | null
     dateApplied: Date | string
     notes?: string | null
     gmailId?: string | null
@@ -6402,10 +6267,7 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
-    location?: NullableStringFieldUpdateOperationsInput | string | null
     source?: NullableStringFieldUpdateOperationsInput | string | null
-    salary?: NullableIntFieldUpdateOperationsInput | number | null
-    jobUrl?: NullableStringFieldUpdateOperationsInput | string | null
     dateApplied?: DateTimeFieldUpdateOperationsInput | Date | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     gmailId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -6417,10 +6279,7 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
-    location?: NullableStringFieldUpdateOperationsInput | string | null
     source?: NullableStringFieldUpdateOperationsInput | string | null
-    salary?: NullableIntFieldUpdateOperationsInput | number | null
-    jobUrl?: NullableStringFieldUpdateOperationsInput | string | null
     dateApplied?: DateTimeFieldUpdateOperationsInput | Date | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     gmailId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -6549,21 +6408,6 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -6581,11 +6425,6 @@ export namespace Prisma {
     none?: ApplicationWhereInput
   }
 
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
-  }
-
   export type ApplicationOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -6593,21 +6432,18 @@ export namespace Prisma {
   export type CompanyCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
-    website?: SortOrder
     createdAt?: SortOrder
   }
 
   export type CompanyMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
-    website?: SortOrder
     createdAt?: SortOrder
   }
 
   export type CompanyMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
-    website?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -6627,24 +6463,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
-  }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -6689,15 +6507,19 @@ export namespace Prisma {
     not?: NestedEnumStatusFilter<$PrismaModel> | $Enums.Status
   }
 
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
   export type CompanyNullableScalarRelationFilter = {
@@ -6710,15 +6532,17 @@ export namespace Prisma {
     isNot?: ResumeWhereInput | null
   }
 
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
   export type ApplicationCountOrderByAggregateInput = {
     id?: SortOrder
     company?: SortOrder
     role?: SortOrder
     status?: SortOrder
-    location?: SortOrder
     source?: SortOrder
-    salary?: SortOrder
-    jobUrl?: SortOrder
     dateApplied?: SortOrder
     notes?: SortOrder
     gmailId?: SortOrder
@@ -6727,19 +6551,12 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
-  export type ApplicationAvgOrderByAggregateInput = {
-    salary?: SortOrder
-  }
-
   export type ApplicationMaxOrderByAggregateInput = {
     id?: SortOrder
     company?: SortOrder
     role?: SortOrder
     status?: SortOrder
-    location?: SortOrder
     source?: SortOrder
-    salary?: SortOrder
-    jobUrl?: SortOrder
     dateApplied?: SortOrder
     notes?: SortOrder
     gmailId?: SortOrder
@@ -6753,20 +6570,13 @@ export namespace Prisma {
     company?: SortOrder
     role?: SortOrder
     status?: SortOrder
-    location?: SortOrder
     source?: SortOrder
-    salary?: SortOrder
-    jobUrl?: SortOrder
     dateApplied?: SortOrder
     notes?: SortOrder
     gmailId?: SortOrder
     companyId?: SortOrder
     resumeId?: SortOrder
     createdAt?: SortOrder
-  }
-
-  export type ApplicationSumOrderByAggregateInput = {
-    salary?: SortOrder
   }
 
   export type EnumStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -6779,20 +6589,22 @@ export namespace Prisma {
     _max?: NestedEnumStatusFilter<$PrismaModel>
   }
 
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
     _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type EnumStatusNullableFilter<$PrismaModel = never> = {
@@ -6923,10 +6735,6 @@ export namespace Prisma {
     set?: string
   }
 
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
-  }
-
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
   }
@@ -7017,12 +6825,8 @@ export namespace Prisma {
     set?: $Enums.Status
   }
 
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
   }
 
   export type CompanyUpdateOneWithoutApplicationsNestedInput = {
@@ -7075,20 +6879,6 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -7128,6 +6918,51 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.Status | EnumStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumStatusFilter<$PrismaModel> | $Enums.Status
+  }
+
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedEnumStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Status | EnumStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumStatusWithAggregatesFilter<$PrismaModel> | $Enums.Status
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumStatusFilter<$PrismaModel>
+    _max?: NestedEnumStatusFilter<$PrismaModel>
+  }
+
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -7154,64 +6989,6 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
-  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type NestedEnumStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.Status | EnumStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumStatusFilter<$PrismaModel> | $Enums.Status
-  }
-
-  export type NestedEnumStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Status | EnumStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumStatusWithAggregatesFilter<$PrismaModel> | $Enums.Status
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumStatusFilter<$PrismaModel>
-    _max?: NestedEnumStatusFilter<$PrismaModel>
-  }
-
-  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedEnumStatusNullableFilter<$PrismaModel = never> = {
@@ -7276,10 +7053,7 @@ export namespace Prisma {
     company: string
     role: string
     status?: $Enums.Status
-    location?: string | null
     source?: string | null
-    salary?: number | null
-    jobUrl?: string | null
     dateApplied: Date | string
     notes?: string | null
     gmailId?: string | null
@@ -7292,10 +7066,7 @@ export namespace Prisma {
     company: string
     role: string
     status?: $Enums.Status
-    location?: string | null
     source?: string | null
-    salary?: number | null
-    jobUrl?: string | null
     dateApplied: Date | string
     notes?: string | null
     gmailId?: string | null
@@ -7337,10 +7108,7 @@ export namespace Prisma {
     company?: StringFilter<"Application"> | string
     role?: StringFilter<"Application"> | string
     status?: EnumStatusFilter<"Application"> | $Enums.Status
-    location?: StringNullableFilter<"Application"> | string | null
     source?: StringNullableFilter<"Application"> | string | null
-    salary?: IntNullableFilter<"Application"> | number | null
-    jobUrl?: StringNullableFilter<"Application"> | string | null
     dateApplied?: DateTimeFilter<"Application"> | Date | string
     notes?: StringNullableFilter<"Application"> | string | null
     gmailId?: StringNullableFilter<"Application"> | string | null
@@ -7354,10 +7122,7 @@ export namespace Prisma {
     company: string
     role: string
     status?: $Enums.Status
-    location?: string | null
     source?: string | null
-    salary?: number | null
-    jobUrl?: string | null
     dateApplied: Date | string
     notes?: string | null
     gmailId?: string | null
@@ -7370,10 +7135,7 @@ export namespace Prisma {
     company: string
     role: string
     status?: $Enums.Status
-    location?: string | null
     source?: string | null
-    salary?: number | null
-    jobUrl?: string | null
     dateApplied: Date | string
     notes?: string | null
     gmailId?: string | null
@@ -7410,14 +7172,12 @@ export namespace Prisma {
   export type CompanyCreateWithoutApplicationsInput = {
     id?: string
     name: string
-    website?: string | null
     createdAt?: Date | string
   }
 
   export type CompanyUncheckedCreateWithoutApplicationsInput = {
     id?: string
     name: string
-    website?: string | null
     createdAt?: Date | string
   }
 
@@ -7459,14 +7219,12 @@ export namespace Prisma {
   export type CompanyUpdateWithoutApplicationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    website?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CompanyUncheckedUpdateWithoutApplicationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    website?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -7500,10 +7258,7 @@ export namespace Prisma {
     company: string
     role: string
     status?: $Enums.Status
-    location?: string | null
     source?: string | null
-    salary?: number | null
-    jobUrl?: string | null
     dateApplied: Date | string
     notes?: string | null
     gmailId?: string | null
@@ -7516,10 +7271,7 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
-    location?: NullableStringFieldUpdateOperationsInput | string | null
     source?: NullableStringFieldUpdateOperationsInput | string | null
-    salary?: NullableIntFieldUpdateOperationsInput | number | null
-    jobUrl?: NullableStringFieldUpdateOperationsInput | string | null
     dateApplied?: DateTimeFieldUpdateOperationsInput | Date | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     gmailId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -7532,10 +7284,7 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
-    location?: NullableStringFieldUpdateOperationsInput | string | null
     source?: NullableStringFieldUpdateOperationsInput | string | null
-    salary?: NullableIntFieldUpdateOperationsInput | number | null
-    jobUrl?: NullableStringFieldUpdateOperationsInput | string | null
     dateApplied?: DateTimeFieldUpdateOperationsInput | Date | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     gmailId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -7548,10 +7297,7 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
-    location?: NullableStringFieldUpdateOperationsInput | string | null
     source?: NullableStringFieldUpdateOperationsInput | string | null
-    salary?: NullableIntFieldUpdateOperationsInput | number | null
-    jobUrl?: NullableStringFieldUpdateOperationsInput | string | null
     dateApplied?: DateTimeFieldUpdateOperationsInput | Date | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     gmailId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -7564,10 +7310,7 @@ export namespace Prisma {
     company: string
     role: string
     status?: $Enums.Status
-    location?: string | null
     source?: string | null
-    salary?: number | null
-    jobUrl?: string | null
     dateApplied: Date | string
     notes?: string | null
     gmailId?: string | null
@@ -7580,10 +7323,7 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
-    location?: NullableStringFieldUpdateOperationsInput | string | null
     source?: NullableStringFieldUpdateOperationsInput | string | null
-    salary?: NullableIntFieldUpdateOperationsInput | number | null
-    jobUrl?: NullableStringFieldUpdateOperationsInput | string | null
     dateApplied?: DateTimeFieldUpdateOperationsInput | Date | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     gmailId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -7596,10 +7336,7 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
-    location?: NullableStringFieldUpdateOperationsInput | string | null
     source?: NullableStringFieldUpdateOperationsInput | string | null
-    salary?: NullableIntFieldUpdateOperationsInput | number | null
-    jobUrl?: NullableStringFieldUpdateOperationsInput | string | null
     dateApplied?: DateTimeFieldUpdateOperationsInput | Date | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     gmailId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -7612,10 +7349,7 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
-    location?: NullableStringFieldUpdateOperationsInput | string | null
     source?: NullableStringFieldUpdateOperationsInput | string | null
-    salary?: NullableIntFieldUpdateOperationsInput | number | null
-    jobUrl?: NullableStringFieldUpdateOperationsInput | string | null
     dateApplied?: DateTimeFieldUpdateOperationsInput | Date | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     gmailId?: NullableStringFieldUpdateOperationsInput | string | null

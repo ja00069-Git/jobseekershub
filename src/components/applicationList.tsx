@@ -6,7 +6,6 @@ type Application = {
   company: string;
   role: string;
   status: string;
-  location?: string | null;
   createdAt: string;
 };
 
@@ -39,7 +38,6 @@ export default function ApplicationList({
               <th className="px-4 py-3 sm:px-6">Company</th>
               <th className="px-4 py-3">Role</th>
               <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Location</th>
               <th className="px-4 py-3 text-right sm:px-6">Actions</th>
             </tr>
           </thead>
@@ -48,7 +46,7 @@ export default function ApplicationList({
             {applications.length === 0 ? (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={4}
                   className="px-4 py-10 text-center text-sm text-slate-500"
                 >
                   No applications yet. Add one from the form to get started.
@@ -64,10 +62,6 @@ export default function ApplicationList({
 
                   <td className="px-4 py-4">
                     <StatusDropdown id={app.id} currentStatus={app.status} />
-                  </td>
-
-                  <td className="px-4 py-4 text-slate-600">
-                    {app.location || "—"}
                   </td>
 
                   <td className="px-4 py-4 text-right sm:px-6">

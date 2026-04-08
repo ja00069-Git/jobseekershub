@@ -10,11 +10,6 @@ export const APPLICATION_STATUS_OPTIONS = [
     color: "bg-blue-100 text-blue-700",
   },
   {
-    value: "phone",
-    label: "Phone Screen",
-    color: "bg-purple-100 text-purple-700",
-  },
-  {
     value: "interview",
     label: "Interview",
     color: "bg-amber-100 text-amber-700",
@@ -42,9 +37,9 @@ export type ApplicationStatus =
 const statusAliasMap: Record<string, ApplicationStatus> = {
   wishlist: "wishlist",
   applied: "applied",
-  phone: "phone",
-  "phone screen": "phone",
-  "phone-screen": "phone",
+  phone: "interview",
+  "phone screen": "interview",
+  "phone-screen": "interview",
   interview: "interview",
   interviewing: "interview",
   offer: "offer",

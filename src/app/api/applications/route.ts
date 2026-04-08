@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import {
   APPLICATION_STATUS_OPTIONS,
   normalizeApplicationStatus,
+  type ApplicationStatus,
 } from "@/lib/application-status";
 import { prisma } from "@/lib/prisma";
 
@@ -36,10 +37,7 @@ type CreateApplicationPayload = {
   company?: unknown;
   role?: unknown;
   status?: unknown;
-  location?: unknown;
   source?: unknown;
-  salary?: unknown;
-  jobUrl?: unknown;
   dateApplied?: unknown;
   notes?: unknown;
   resumeId?: unknown;
@@ -61,26 +59,6 @@ const parseOptionalString = (value: unknown) => {
   return trimmedValue.length > 0 ? trimmedValue : null;
 };
 
-const parseOptionalSalary = (value: unknown) => {
-  if (value === undefined || value === null || value === "") {
-    return null;
-  }
-
-  if (typeof value === "number" && Number.isInteger(value)) {
-    return value;
-  }
-
-  if (typeof value === "string") {
-    const parsedValue = Number.parseInt(value, 10);
-
-    if (Number.isInteger(parsedValue)) {
-      return parsedValue;
-    }
-  }
-
-  return Number.NaN;
-};
-
 const parseDateApplied = (value: unknown) => {
   if (!isNonEmptyString(value)) {
     return null;
@@ -94,6 +72,19 @@ const parseDateApplied = (value: unknown) => {
 export async function GET() {
   try {
     const applications = await prisma.application.findMany({
+      select: {
+        id: true,
+        company: true,
+        role: true,
+        status: true,
+        source: true,
+        dateApplied: true,
+        notes: true,
+        gmailId: true,
+        companyId: true,
+        resumeId: true,
+        createdAt: true,
+      },
       orderBy: [{ dateApplied: "desc" }, { createdAt: "desc" }],
     });
 
@@ -146,15 +137,6 @@ export async function POST(request: Request) {
     );
   }
 
-  const salary = parseOptionalSalary(payload.salary);
-
-  if (Number.isNaN(salary)) {
-    return NextResponse.json(
-      { error: "salary must be an integer when provided." },
-      { status: 400 },
-    );
-  }
-
   try {
     const companyName = payload.company.trim();
     const companyRecord = await prisma.company.upsert({
@@ -168,10 +150,7 @@ export async function POST(request: Request) {
         company: companyName,
         role: payload.role.trim(),
         status: normalizedStatus,
-        location: parseOptionalString(payload.location),
         source: parseOptionalString(payload.source),
-        salary,
-        jobUrl: parseOptionalString(payload.jobUrl),
         dateApplied,
         notes: parseOptionalString(payload.notes),
         companyId: companyRecord.id,
@@ -186,10 +165,14 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  let payload: { id?: unknown; status?: unknown };
+  let payload: { id?: unknown; status?: unknown; resumeId?: unknown };
 
   try {
-    payload = (await request.json()) as { id?: unknown; status?: unknown };
+    payload = (await request.json()) as {
+      id?: unknown;
+      status?: unknown;
+      resumeId?: unknown;
+    };
   } catch {
     return NextResponse.json(
       { error: "Request body must be valid JSON." },
@@ -197,20 +180,44 @@ export async function PATCH(request: Request) {
     );
   }
 
-  if (!isNonEmptyString(payload.id) || !isNonEmptyString(payload.status)) {
-    return NextResponse.json(
-      { error: "id and status are required." },
-      { status: 400 },
-    );
+  if (!isNonEmptyString(payload.id)) {
+    return NextResponse.json({ error: "id is required." }, { status: 400 });
   }
 
-  const normalizedStatus = normalizeApplicationStatus(payload.status);
+  const updateData: {
+    status?: ApplicationStatus;
+    resumeId?: string | null;
+  } = {};
 
-  if (!normalizedStatus) {
+  if (payload.status !== undefined) {
+    if (!isNonEmptyString(payload.status)) {
+      return NextResponse.json(
+        { error: "status must be a non-empty string when provided." },
+        { status: 400 },
+      );
+    }
+
+    const normalizedStatus = normalizeApplicationStatus(payload.status);
+
+    if (!normalizedStatus) {
+      return NextResponse.json(
+        {
+          error: `status must be one of: ${APPLICATION_STATUS_OPTIONS.map((option) => option.label).join(", ")}.`,
+        },
+        { status: 400 },
+      );
+    }
+
+    updateData.status = normalizedStatus;
+  }
+
+  if (payload.resumeId !== undefined) {
+    updateData.resumeId = parseOptionalString(payload.resumeId);
+  }
+
+  if (Object.keys(updateData).length === 0) {
     return NextResponse.json(
-      {
-        error: `status must be one of: ${APPLICATION_STATUS_OPTIONS.map((option) => option.label).join(", ")}.`,
-      },
+      { error: "Provide at least one field to update." },
       { status: 400 },
     );
   }
@@ -218,8 +225,11 @@ export async function PATCH(request: Request) {
   try {
     const updated = await prisma.application.update({
       where: { id: payload.id.trim() },
-      data: {
-        status: normalizedStatus,
+      data: updateData,
+      include: {
+        resume: {
+          select: { id: true, name: true },
+        },
       },
     });
 

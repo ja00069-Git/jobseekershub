@@ -107,7 +107,7 @@ export default function GmailSyncButton() {
   } as const;
 
   return (
-    <div className="flex flex-col items-start gap-2 lg:items-end" aria-live="polite">
+    <div className="flex flex-col items-start gap-1.5 lg:items-end" aria-live="polite">
       <button
         type="button"
         onClick={() => void syncGmail()}
@@ -124,7 +124,7 @@ export default function GmailSyncButton() {
 
       {message ? (
         <p
-          className={`max-w-sm rounded-xl border px-3 py-2 text-xs ${messageStyles[tone]}`}
+          className={`max-w-sm rounded-xl border px-3 py-1.5 text-xs ${messageStyles[tone]}`}
         >
           {message}
         </p>
