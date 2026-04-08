@@ -139,7 +139,7 @@ export default function ApplicationForm({
                     Application details
                   </h3>
                   <p className="mt-1 text-sm text-slate-500">
-                    Add the essentials and assign a resume version in one place.
+                    Add the main details and choose the resume you used.
                   </p>
                 </div>
 
@@ -216,7 +216,7 @@ export default function ApplicationForm({
                   <label className="space-y-1.5">
                     <span className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-700">
                       <FiFileText className="h-4 w-4" />
-                      Resume version
+                      Resume used
                     </span>
                     <select
                       className={fieldClassName}
@@ -237,7 +237,7 @@ export default function ApplicationForm({
                     <textarea
                       className={`${fieldClassName} min-h-24 resize-y`}
                       rows={4}
-                      placeholder="Referral, recruiter notes, next steps..."
+                      placeholder="Contact notes, follow-ups, or anything important..."
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
                     />

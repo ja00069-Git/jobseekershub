@@ -40,12 +40,12 @@ export default async function ApplicationsPage() {
     <div className="mx-auto max-w-[1400px] space-y-5">
       <PageHeader
         eyebrow="Applications"
-        title="Keep the board front and center"
-        description="Move roles through the pipeline quickly, assign the right resume, and keep imports flowing into the board without extra clutter."
+        title="Track every application"
+        description="See your progress, update each stage, and note which resume you sent."
         badges={[
-          { label: `${applications.length} roles` },
-          { label: `${activePipeline} active`, tone: "blue" },
-          { label: `${pendingImports} pending review`, tone: "amber" },
+          { label: `${applications.length} applications` },
+          { label: `${activePipeline} in progress`, tone: "blue" },
+          { label: `${pendingImports} emails to review`, tone: "amber" },
         ]}
         actions={
           <>
@@ -53,7 +53,7 @@ export default async function ApplicationsPage() {
               href="/review"
               className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
             >
-              Review imports
+              Review emails
             </Link>
             <ApplicationForm resumes={resumes} />
           </>

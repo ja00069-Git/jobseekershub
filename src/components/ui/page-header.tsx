@@ -29,27 +29,27 @@ export default function PageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <section className="rounded-[28px] border border-slate-200/80 bg-white p-5 shadow-sm sm:p-6">
-      <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
-        <div className="max-w-3xl space-y-2">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500">
+    <section className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm sm:p-5">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+        <div className="max-w-3xl space-y-1.5">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">
             {eyebrow}
           </p>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-[2rem]">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-[1.7rem]">
             {title}
           </h1>
           {description ? (
-            <p className="max-w-2xl text-sm leading-6 text-slate-600">
+            <p className="max-w-2xl text-[13px] leading-5 text-slate-600">
               {description}
             </p>
           ) : null}
 
           {badges.length > 0 ? (
-            <div className="flex flex-wrap gap-2 pt-1">
+            <div className="flex flex-wrap gap-1.5 pt-0.5">
               {badges.map((badge) => (
                 <span
                   key={String(badge.label)}
-                  className={`rounded-full px-3 py-1 text-xs font-semibold ${badgeToneClasses[badge.tone ?? "slate"]}`}
+                  className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${badgeToneClasses[badge.tone ?? "slate"]}`}
                 >
                   {badge.label}
                 </span>
@@ -59,7 +59,7 @@ export default function PageHeader({
         </div>
 
         {actions ? (
-          <div className="flex flex-wrap items-center gap-2 xl:justify-end">
+          <div className="flex flex-wrap items-center gap-2 lg:justify-end">
             {actions}
           </div>
         ) : null}

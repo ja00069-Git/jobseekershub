@@ -12,23 +12,6 @@ function detectImportSource(from: string) {
   return "Email";
 }
 
-function extractLocation(subject: string, snippet: string) {
-  const text = `${subject}\n${snippet}`;
-  const patterns = [
-    /\bin\s+([A-Z][A-Za-z .'-]+,\s*[A-Z]{2}(?:\s+\d{5})?)(?=\s+and\s+\d+\s+more\s+new\s+jobs|\s*\(|$)/i,
-    /[·-]\s*([A-Z][A-Za-z .'-]+,\s*[A-Z]{2}(?:\s+\d{5})?)(?=\s|$)/,
-  ];
-
-  for (const pattern of patterns) {
-    const match = text.match(pattern);
-    if (match?.[1]) {
-      return match[1].replace(/\s+/g, " ").trim();
-    }
-  }
-
-  return null;
-}
-
 export async function GET() {
   try {
     const data = await prisma.importedEmail.findMany({
@@ -36,12 +19,7 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json(
-      data.map((email) => ({
-        ...email,
-        location: extractLocation(email.subject, email.snippet),
-      })),
-    );
+    return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json(
       {

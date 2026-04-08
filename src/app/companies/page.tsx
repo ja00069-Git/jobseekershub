@@ -52,21 +52,21 @@ export default async function CompaniesPage() {
     <div className="mx-auto max-w-[1400px] space-y-5">
       <PageHeader
         eyebrow="Companies"
-        title="Track every company relationship in one place"
-        description="See repeat outreach, resume usage, and the most recent activity for each company without hunting through the board."
+        title="Track company activity"
+        description="See where you have applied and review your history with each company."
       />
 
       <div className="grid gap-4 md:grid-cols-3">
-        <MetricCard icon={<HiOutlineBuildingOffice2 className="h-5 w-5" />} label="Companies tracked" value={companies.length} tone="slate" />
-        <MetricCard icon={<FiBriefcase className="h-5 w-5" />} label="Applications logged" value={totalApplications} tone="blue" />
-        <MetricCard icon={<FiGlobe className="h-5 w-5" />} label="Active company pipelines" value={activeCompanies} tone="amber" />
+        <MetricCard icon={<HiOutlineBuildingOffice2 className="h-5 w-5" />} label="Companies" value={companies.length} tone="slate" />
+        <MetricCard icon={<FiBriefcase className="h-5 w-5" />} label="Applications" value={totalApplications} tone="blue" />
+        <MetricCard icon={<FiGlobe className="h-5 w-5" />} label="Companies in progress" value={activeCompanies} tone="amber" />
       </div>
 
       {companies.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-10 text-center shadow-sm">
           <p className="text-lg font-semibold text-slate-900">No companies yet</p>
           <p className="mt-2 text-sm text-slate-500">
-            Companies will be created automatically when you import or add applications.
+            Companies appear automatically when you add an application or save a job email.
           </p>
         </div>
       ) : (
@@ -80,7 +80,7 @@ export default async function CompaniesPage() {
                 <div>
                   <h2 className="text-xl font-semibold text-slate-900">{company.name}</h2>
                   <p className="mt-1 text-sm text-slate-500">
-                    {company._count.applications} role{company._count.applications === 1 ? "" : "s"} tracked
+                    {company._count.applications} job{company._count.applications === 1 ? "" : "s"} saved
                   </p>
                 </div>
 
@@ -90,13 +90,13 @@ export default async function CompaniesPage() {
               </div>
 
               <p className="mt-2 text-sm text-slate-500">
-                You&apos;ve sent {company._count.applications} application{company._count.applications === 1 ? "" : "s"} to this company.
+                You have {company._count.applications} application{company._count.applications === 1 ? "" : "s"} saved for this company.
               </p>
 
               <div className="mt-4 space-y-2">
                 {company.applications.length === 0 ? (
                   <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
-                    No applications attached yet.
+                    No applications added yet.
                   </div>
                 ) : (
                   company.applications.map((application) => (
@@ -111,7 +111,7 @@ export default async function CompaniesPage() {
                             {application.dateApplied.toLocaleDateString()}
                           </p>
                           <p className="mt-1 text-xs text-slate-500">
-                            Resume: {application.resume?.name ?? "Not assigned"}
+                            Resume used: {application.resume?.name ?? "Not assigned"}
                           </p>
                         </div>
                         <span className="rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-600">

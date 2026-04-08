@@ -14,9 +14,9 @@ export default async function ReviewPage() {
     <div className="mx-auto max-w-[1400px] space-y-5">
       <PageHeader
         eyebrow="Review"
-        title="Approve imported emails without the noise"
-        description="Confirm the company and role, then push the right emails into your application board in one pass."
-        badges={[{ label: `${pendingImports} pending`, tone: "amber" }]}
+        title="Review job-related emails"
+        description="Look over new emails, keep the useful ones, and save them as applications."
+        badges={[{ label: `${pendingImports} emails to review`, tone: "amber" }]}
         actions={
           <>
             <GmailSyncButton />

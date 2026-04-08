@@ -16,7 +16,7 @@ export default function TopBar() {
               JobHuntHQ
             </p>
             <h2 className="truncate text-sm font-semibold text-slate-900 sm:text-base">
-              Career tracker workspace
+              Job search dashboard
             </h2>
           </div>
         </div>

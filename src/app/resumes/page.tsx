@@ -8,34 +8,43 @@ import PageHeader from "@/components/ui/page-header";
 import { prisma } from "@/lib/prisma";
 
 export default async function ResumesPage() {
-  const [resumes, applicationsWithResumes] = await Promise.all([
-    prisma.resume.findMany({
-      orderBy: { createdAt: "desc" },
-    }),
-    prisma.application.count({
-      where: {
-        NOT: { resumeId: null },
+  const resumes = await prisma.resume.findMany({
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      name: true,
+      fileUrl: true,
+      createdAt: true,
+      _count: {
+        select: {
+          applications: true,
+        },
       },
-    }),
-  ]);
+    },
+  });
+
+  const resumesInUse = resumes.filter((resume) => resume._count.applications > 0).length;
 
   return (
     <div className="mx-auto max-w-[1400px] space-y-5">
       <PageHeader
         eyebrow="Resumes"
-        title="Keep resume versions tidy and ready to use"
-        description="Store the variants you actually send, then attach them to applications directly from the board."
+        title="Manage your resumes"
+        description="Keep your resume versions in one place so you can choose the right one quickly."
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:max-w-3xl">
-        <MetricCard label="Saved versions" value={resumes.length} icon={<FiFileText className="h-4 w-4" />} tone="slate" />
-        <MetricCard label="Linked applications" value={applicationsWithResumes} icon={<FiLink2 className="h-4 w-4" />} tone="blue" />
+        <MetricCard label="Saved resumes" value={resumes.length} icon={<FiFileText className="h-4 w-4" />} tone="slate" />
+        <MetricCard label="Resumes in use" value={resumesInUse} icon={<FiLink2 className="h-4 w-4" />} tone="blue" />
       </div>
 
       <ResumeManager
         initialResumes={resumes.map((resume) => ({
-          ...resume,
+          id: resume.id,
+          name: resume.name,
+          fileUrl: resume.fileUrl,
           createdAt: resume.createdAt.toISOString(),
+          applicationCount: resume._count.applications,
         }))}
       />
     </div>

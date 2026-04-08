@@ -45,7 +45,7 @@ export default function GmailSyncButton() {
           throw new Error(
             !Array.isArray(data) && data?.error
               ? data.error
-              : "Could not import Gmail applications.",
+              : "Could not check Gmail for job emails.",
           );
         }
 
@@ -54,17 +54,17 @@ export default function GmailSyncButton() {
         setTone(importedCount > 0 ? "success" : "info");
         setMessage(
           importedCount > 0
-            ? `Imported ${importedCount} application${importedCount === 1 ? "" : "s"} from Gmail.`
+            ? `Found ${importedCount} new job email${importedCount === 1 ? "" : "s"}.`
             : auto
-              ? "Gmail checked. No new applications found."
-              : "No new Gmail applications found.",
+              ? "Checked Gmail. No new job emails found."
+              : "No new job emails found.",
         );
 
         router.refresh();
       } catch (error) {
         setTone("error");
         setMessage(
-          error instanceof Error ? error.message : "Gmail sync failed.",
+          error instanceof Error ? error.message : "Could not check Gmail.",
         );
       } finally {
         setIsSyncing(false);
@@ -83,7 +83,7 @@ export default function GmailSyncButton() {
   if (!mounted || status === "loading") {
     return (
       <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-500">
-        Loading Gmail...
+        Checking your email...
       </div>
     );
   }
@@ -119,7 +119,7 @@ export default function GmailSyncButton() {
             isSyncing ? "animate-pulse bg-amber-400" : "bg-emerald-400"
           }`}
         />
-        {isSyncing ? "Syncing..." : "Sync Gmail"}
+        {isSyncing ? "Checking..." : "Check for emails"}
       </button>
 
       {message ? (

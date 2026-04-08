@@ -261,7 +261,7 @@ function Column({
           ))
         ) : (
           <div className="rounded-xl border border-dashed border-slate-200 bg-white/70 p-3 text-sm text-slate-400">
-            Drop an application here.
+            Move an application here.
           </div>
         )}
       </div>

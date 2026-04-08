@@ -17,9 +17,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "JobHuntHQ — Career Operating System",
+  title: "JobHuntHQ — Job Search Tracker",
   description:
-    "Track applications, review Gmail imports, manage companies and resumes, and stay organized through every stage of your search.",
+    "Organize your applications, review job emails, track companies, and keep your resumes ready in one place.",
 };
 
 export default function RootLayout({
@@ -40,7 +40,7 @@ export default function RootLayout({
             <div className="flex min-h-screen flex-1 flex-col overflow-hidden">
               <TopBar />
 
-              <main className="flex-1 overflow-y-auto px-3 py-3 sm:px-5 sm:py-5 lg:px-6 lg:py-6">
+              <main className="flex-1 overflow-y-auto px-3 py-2.5 sm:px-4 sm:py-4 lg:px-5 lg:py-5">
                 {children}
               </main>
             </div>

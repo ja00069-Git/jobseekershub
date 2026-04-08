@@ -44,7 +44,7 @@ export default function Sidebar() {
             </div>
             <div>
               <h1 className="text-base font-semibold text-slate-900">JobHuntHQ</h1>
-              <p className="text-xs text-slate-500">Pipeline, review, and resumes</p>
+              <p className="text-xs text-slate-500">Applications, emails, resumes</p>
             </div>
           </div>
         ) : null}
@@ -67,7 +67,7 @@ export default function Sidebar() {
       <nav className="space-y-1.5">
         {!collapsed ? (
           <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400">
-            Workspace
+            Menu
           </p>
         ) : null}
 

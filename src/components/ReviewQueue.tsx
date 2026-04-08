@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { FiBriefcase, FiCheckCircle, FiInbox, FiMail, FiMapPin, FiXCircle } from "react-icons/fi";
+import { FiBriefcase, FiCheckCircle, FiInbox, FiMail, FiXCircle } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 
 type ImportedEmail = {
@@ -11,7 +11,6 @@ type ImportedEmail = {
   snippet: string;
   company: string | null;
   role: string | null;
-  location?: string | null;
   source?: string | null;
   status: string | null;
   score: number;
@@ -48,13 +47,13 @@ export default function ReviewQueue() {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to load review queue.");
+        throw new Error("Could not load emails to review.");
       }
 
       const data = (await res.json()) as unknown;
       setEmails(Array.isArray(data) ? (data as ImportedEmail[]) : []);
     } catch {
-      setError("Failed to load review queue.");
+      setError("Could not load emails to review.");
     } finally {
       setLoading(false);
     }
@@ -128,13 +127,13 @@ export default function ReviewQueue() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
-            Pending imports
+            Emails to review
           </p>
           <h2 className="mt-1 text-2xl font-semibold text-slate-900">
-            {emails.length} item{emails.length === 1 ? "" : "s"} to review
+            {emails.length} email{emails.length === 1 ? "" : "s"} to review
           </h2>
           <p className="mt-1 text-sm text-slate-500">
-            Approve the real matches and clear the noise quickly.
+            Keep the useful job emails and remove the rest.
           </p>
         </div>
 
@@ -185,11 +184,10 @@ export default function ReviewQueue() {
             <FiInbox className="h-5 w-5" />
           </div>
           <h3 className="mt-4 text-lg font-semibold text-slate-900">
-            Your review queue is clear
+            You are all caught up
           </h3>
           <p className="mt-2 text-sm text-slate-500">
-            New Gmail imports will appear here for approval before they are
-            added to your application pipeline.
+            New job emails will appear here after Gmail is checked.
           </p>
         </div>
       ) : (
@@ -234,7 +232,7 @@ function Card({
               {role || email.role || email.subject}
             </h3>
             <p className="mt-1 text-sm text-slate-500">
-              {company || email.company || "Company needs confirmation"}
+              {company || email.company || "Company not confirmed yet"}
             </p>
           </div>
 
@@ -247,10 +245,6 @@ function Card({
 
         <div className="flex flex-wrap gap-2 text-xs">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-700">
-            <FiMapPin className="h-3.5 w-3.5" />
-            {email.location || "Location unavailable"}
-          </span>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-700">
             <FiBriefcase className="h-3.5 w-3.5" />
             {email.source || "Email"}
           </span>
@@ -262,7 +256,7 @@ function Card({
 
         <div className="rounded-2xl bg-slate-50 p-4">
           <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500">
-            Email preview
+            Message preview
           </p>
           <p className="mt-2 text-sm font-medium text-slate-700">
             {email.subject}
@@ -301,8 +295,8 @@ function Card({
         <div className="flex flex-col gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-slate-500">
             {canApprove
-              ? "Approve to send this import into your application board."
-              : "Add both a company and role to approve this import."}
+              ? "Save this email to your applications list."
+              : "Add a company and job title before saving."}
           </p>
 
           <div className="flex flex-wrap gap-2">
@@ -328,7 +322,7 @@ function Card({
               className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-300"
             >
               <FiCheckCircle className="h-4 w-4" />
-              {isApproving ? "Approving..." : "Approve import"}
+              {isApproving ? "Saving..." : "Save to applications"}
             </button>
           </div>
         </div>
