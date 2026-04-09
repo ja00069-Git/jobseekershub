@@ -1,3 +1,4 @@
+import { getCurrentUserRecord } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
 
 export type DashboardApplication = {
@@ -9,7 +10,14 @@ export type DashboardApplication = {
 };
 
 export async function getApplications(): Promise<DashboardApplication[]> {
+  const currentUser = await getCurrentUserRecord();
+
+  if (!currentUser) {
+    return [];
+  }
+
   const applications = await prisma.application.findMany({
+    where: { ownerId: currentUser.user.id },
     select: {
       id: true,
       company: true,
@@ -57,7 +65,16 @@ export function getDashboardStats(applications: DashboardApplication[]) {
 }
 
 export async function getPendingImportsCount() {
+  const currentUser = await getCurrentUserRecord();
+
+  if (!currentUser) {
+    return 0;
+  }
+
   return prisma.importedEmail.count({
-    where: { reviewed: false },
+    where: {
+      reviewed: false,
+      ownerId: currentUser.user.id,
+    },
   });
 }

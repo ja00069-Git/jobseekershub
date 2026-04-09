@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
 
 import type { Status } from "@/generated/prisma";
-import { authOptions } from "@/lib/auth";
+import { getCurrentUserRecord } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
+import { enforceRateLimit } from "@/lib/rate-limit";
+import { validateTrustedOrigin } from "@/lib/request-security";
 
 type GmailHeader = {
   name?: string;
@@ -220,16 +221,28 @@ function detectStatus(text: string): Status {
 /**
  * MAIN
  */
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
+    const currentUser = await getCurrentUserRecord();
 
-    if (!session?.accessToken) {
+    if (!currentUser?.session.accessToken) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
       );
     }
+
+    const originError = validateTrustedOrigin(request);
+    if (originError) return originError;
+
+    const ownerId = currentUser.user.id;
+
+    const rateLimitError = enforceRateLimit({
+      key: `gmail:sync:${ownerId}`,
+      limit: 10,
+      windowMs: 5 * 60_000,
+    });
+    if (rateLimitError) return rateLimitError;
 
     const query = encodeURIComponent(
       '(application OR "thank you for applying" OR "application submitted" OR "your application was sent")'
@@ -239,11 +252,18 @@ export async function GET() {
       `https://www.googleapis.com/gmail/v1/users/me/messages?maxResults=50&q=${query}`,
       {
         headers: {
-          Authorization: `Bearer ${session.accessToken}`,
+          Authorization: `Bearer ${currentUser.session.accessToken}`,
         },
         cache: "no-store",
       }
     );
+
+    if (!listRes.ok) {
+      return NextResponse.json(
+        { error: "Gmail sync failed." },
+        { status: 502 },
+      );
+    }
 
     const listData = (await listRes.json()) as GmailListResponse;
 
@@ -253,7 +273,7 @@ export async function GET() {
           `https://www.googleapis.com/gmail/v1/users/me/messages/${m.id}`,
           {
             headers: {
-              Authorization: `Bearer ${session.accessToken}`,
+              Authorization: `Bearer ${currentUser.session.accessToken}`,
             },
             cache: "no-store",
           }
@@ -304,8 +324,11 @@ export async function GET() {
           role = extractRole(subject, snippet);
         }
 
-        const existingApp = await prisma.application.findUnique({
-          where: { gmailId: message.id },
+        const existingApp = await prisma.application.findFirst({
+          where: {
+            ownerId,
+            gmailId: message.id,
+          },
         });
 
         if (existingApp) return null;
@@ -321,7 +344,12 @@ export async function GET() {
         const sourceLabel = source === "unknown" ? "Email" : capitalize(source);
 
         const imported = await prisma.importedEmail.upsert({
-          where: { gmailId: message.id },
+          where: {
+            ownerId_gmailId: {
+              ownerId,
+              gmailId: message.id,
+            },
+          },
           update: {
             subject,
             from,
@@ -342,6 +370,7 @@ export async function GET() {
             source: sourceLabel,
             status,
             score,
+            ownerId,
           },
         });
 
@@ -350,10 +379,10 @@ export async function GET() {
     );
 
     return NextResponse.json(parsed.filter(Boolean));
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : "Gmail sync failed",
+        error: "Gmail sync failed.",
       },
       { status: 500 }
     );

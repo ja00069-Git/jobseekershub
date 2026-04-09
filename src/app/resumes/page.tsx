@@ -5,23 +5,30 @@ import { FiFileText, FiLink2 } from "react-icons/fi";
 import ResumeManager from "@/components/resume-manager";
 import MetricCard from "@/components/ui/metric-card";
 import PageHeader from "@/components/ui/page-header";
+import { getCurrentUserRecord } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
 
 export default async function ResumesPage() {
-  const resumes = await prisma.resume.findMany({
-    orderBy: { createdAt: "desc" },
-    select: {
-      id: true,
-      name: true,
-      fileUrl: true,
-      createdAt: true,
-      _count: {
+  const currentUser = await getCurrentUserRecord();
+  const ownerId = currentUser?.user.id;
+
+  const resumes = ownerId
+    ? await prisma.resume.findMany({
+        where: { ownerId },
+        orderBy: { createdAt: "desc" },
         select: {
-          applications: true,
+          id: true,
+          name: true,
+          fileUrl: true,
+          createdAt: true,
+          _count: {
+            select: {
+              applications: true,
+            },
+          },
         },
-      },
-    },
-  });
+      })
+    : [];
 
   const resumesInUse = resumes.filter((resume) => resume._count.applications > 0).length;
 

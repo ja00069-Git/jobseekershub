@@ -40,7 +40,6 @@ The app is built around a simple flow:
 
 ## Application stages
 
-- `wishlist`
 - `applied`
 - `interview`
 - `offer`

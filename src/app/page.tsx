@@ -4,29 +4,39 @@ import { FiArrowRight, FiBriefcase, FiInbox, FiPercent, FiTarget, FiTrendingUp, 
 import MetricCard from "@/components/ui/metric-card";
 import PageHeader from "@/components/ui/page-header";
 import { getStatusLabel } from "@/lib/application-status";
+import { getCurrentUserRecord } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const [applications, pendingImports, companies, resumes] = await Promise.all([
-    prisma.application.findMany({
-      select: {
-        id: true,
-        company: true,
-        role: true,
-        status: true,
-        source: true,
-        createdAt: true,
-      },
-      orderBy: { createdAt: "desc" },
-    }),
-    prisma.importedEmail.count({
-      where: { reviewed: false },
-    }),
-    prisma.company.count(),
-    prisma.resume.count(),
-  ]);
+  const currentUser = await getCurrentUserRecord();
+  const ownerId = currentUser?.user.id;
+
+  const [applications, pendingImports, companies, resumes] = ownerId
+    ? await Promise.all([
+        prisma.application.findMany({
+          where: { ownerId },
+          select: {
+            id: true,
+            company: true,
+            role: true,
+            status: true,
+            source: true,
+            createdAt: true,
+          },
+          orderBy: { createdAt: "desc" },
+        }),
+        prisma.importedEmail.count({
+          where: {
+            reviewed: false,
+            ownerId,
+          },
+        }),
+        prisma.company.count({ where: { ownerId } }),
+        prisma.resume.count({ where: { ownerId } }),
+      ])
+    : [[], 0, 0, 0];
 
   const total = applications.length;
   const active = applications.filter(

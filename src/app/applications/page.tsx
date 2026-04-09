@@ -5,32 +5,43 @@ import Link from "next/link";
 import ApplicationForm from "@/components/applicationForm";
 import KanbanBoard from "@/components/kanbanBoard";
 import PageHeader from "@/components/ui/page-header";
+import { getCurrentUserRecord } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
 
 export default async function ApplicationsPage() {
-  const [applications, pendingImports, resumes] = await Promise.all([
-    prisma.application.findMany({
-      select: {
-        id: true,
-        company: true,
-        role: true,
-        status: true,
-        source: true,
-        resumeId: true,
-        resume: {
+  const currentUser = await getCurrentUserRecord();
+  const ownerId = currentUser?.user.id;
+
+  const [applications, pendingImports, resumes] = ownerId
+    ? await Promise.all([
+        prisma.application.findMany({
+          where: { ownerId },
+          select: {
+            id: true,
+            company: true,
+            role: true,
+            status: true,
+            source: true,
+            resumeId: true,
+            resume: {
+              select: { id: true, name: true },
+            },
+          },
+          orderBy: [{ dateApplied: "desc" }, { createdAt: "desc" }],
+        }),
+        prisma.importedEmail.count({
+          where: {
+            reviewed: false,
+            ownerId,
+          },
+        }),
+        prisma.resume.findMany({
+          where: { ownerId },
+          orderBy: { createdAt: "desc" },
           select: { id: true, name: true },
-        },
-      },
-      orderBy: [{ dateApplied: "desc" }, { createdAt: "desc" }],
-    }),
-    prisma.importedEmail.count({
-      where: { reviewed: false },
-    }),
-    prisma.resume.findMany({
-      orderBy: { createdAt: "desc" },
-      select: { id: true, name: true },
-    }),
-  ]);
+        }),
+      ])
+    : [[], 0, []];
 
   const activePipeline = applications.filter(
     (application) => !["offer", "rejected", "withdrawn"].includes(application.status),

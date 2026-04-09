@@ -24,11 +24,11 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 7.6.0
+ * Prisma Client JS version: 7.7.0
  * Query Engine version: 75cbdc1eb7150937890ad5465d861175c6624711
  */
 Prisma.prismaVersion = {
-  client: "7.6.0",
+  client: "7.7.0",
   engine: "75cbdc1eb7150937890ad5465d861175c6624711"
 }
 
@@ -120,17 +120,27 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.UserScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  name: 'name',
+  image: 'image',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.CompanyScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  ownerId: 'ownerId'
 };
 
 exports.Prisma.ResumeScalarFieldEnum = {
   id: 'id',
   name: 'name',
   fileUrl: 'fileUrl',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  ownerId: 'ownerId'
 };
 
 exports.Prisma.ApplicationScalarFieldEnum = {
@@ -142,6 +152,7 @@ exports.Prisma.ApplicationScalarFieldEnum = {
   dateApplied: 'dateApplied',
   notes: 'notes',
   gmailId: 'gmailId',
+  ownerId: 'ownerId',
   companyId: 'companyId',
   resumeId: 'resumeId',
   createdAt: 'createdAt'
@@ -159,6 +170,7 @@ exports.Prisma.ImportedEmailScalarFieldEnum = {
   status: 'status',
   score: 'score',
   reviewed: 'reviewed',
+  ownerId: 'ownerId',
   createdAt: 'createdAt'
 };
 
@@ -185,6 +197,7 @@ exports.Status = exports.$Enums.Status = {
 };
 
 exports.Prisma.ModelName = {
+  User: 'User',
   Company: 'Company',
   Resume: 'Resume',
   Application: 'Application',

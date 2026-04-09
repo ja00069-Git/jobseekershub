@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "preflight": "node scripts/preflight.mjs",
     "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "db:seed": "node prisma/seed.mjs"
@@ -15,11 +16,10 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@prisma/adapter-pg": "^7.6.0",
-    "@prisma/client": "^7.6.0",
+    "@prisma/client": "^7.7.0",
     "next": "16.2.2",
     "next-auth": "^4.24.13",
     "pg": "^8.16.3",
-    "prisma": "^7.6.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-icons": "^5.6.0"
@@ -31,6 +31,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.2",
+    "prisma": "^7.7.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

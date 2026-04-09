@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 
 import { normalizeApplicationStatus } from "@/lib/application-status";
+import { getCurrentUserRecord } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
+import { enforceRateLimit } from "@/lib/rate-limit";
+import { validateTrustedOrigin } from "@/lib/request-security";
 
 function detectImportSource(from: string) {
   const lower = from.toLowerCase();
@@ -14,9 +17,18 @@ function detectImportSource(from: string) {
 }
 
 export async function GET() {
+  const currentUser = await getCurrentUserRecord();
+
+  if (!currentUser) {
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  }
+
   try {
     const data = await prisma.importedEmail.findMany({
-      where: { reviewed: false },
+      where: {
+        reviewed: false,
+        ownerId: currentUser.user.id,
+      },
       orderBy: { createdAt: "desc" },
     });
 
@@ -26,11 +38,10 @@ export async function GET() {
     }));
 
     return NextResponse.json(normalizedData);
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       {
-        error:
-          error instanceof Error ? error.message : "Failed to load imports.",
+        error: "Failed to load imports.",
       },
       { status: 500 },
     );
@@ -38,6 +49,22 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const currentUser = await getCurrentUserRecord();
+
+  if (!currentUser) {
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  }
+
+  const originError = validateTrustedOrigin(req);
+  if (originError) return originError;
+
+  const rateLimitError = enforceRateLimit({
+    key: `imports:approve:${currentUser.user.id}`,
+    limit: 60,
+    windowMs: 60_000,
+  });
+  if (rateLimitError) return rateLimitError;
+
   try {
     const body = (await req.json()) as {
       id?: string;
@@ -49,8 +76,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing id" }, { status: 400 });
     }
 
-    const email = await prisma.importedEmail.findUnique({
-      where: { id: body.id },
+    const email = await prisma.importedEmail.findFirst({
+      where: {
+        id: body.id,
+        ownerId: currentUser.user.id,
+      },
     });
 
     if (!email) {
@@ -69,8 +99,11 @@ export async function POST(req: Request) {
     });
 
     const existingApplication = updated.gmailId
-      ? await prisma.application.findUnique({
-          where: { gmailId: updated.gmailId },
+      ? await prisma.application.findFirst({
+          where: {
+            ownerId: currentUser.user.id,
+            gmailId: updated.gmailId,
+          },
         })
       : null;
 
@@ -79,9 +112,17 @@ export async function POST(req: Request) {
       const companyRecord =
         companyName !== "Unknown"
           ? await prisma.company.upsert({
-              where: { name: companyName },
+              where: {
+                ownerId_name: {
+                  ownerId: currentUser.user.id,
+                  name: companyName,
+                },
+              },
               update: {},
-              create: { name: companyName },
+              create: {
+                name: companyName,
+                ownerId: currentUser.user.id,
+              },
             })
           : null;
 
@@ -93,6 +134,7 @@ export async function POST(req: Request) {
           source: updated.source || detectImportSource(updated.from),
           dateApplied: new Date(),
           gmailId: updated.gmailId,
+          ownerId: currentUser.user.id,
           companyId: companyRecord?.id,
           notes: `Imported from Gmail: ${email.subject} (score: ${email.score})`,
         },
@@ -105,11 +147,10 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       {
-        error:
-          error instanceof Error ? error.message : "Failed to approve import.",
+        error: "Failed to approve import.",
       },
       { status: 500 },
     );

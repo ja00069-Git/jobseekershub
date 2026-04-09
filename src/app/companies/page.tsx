@@ -6,47 +6,55 @@ import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
 import MetricCard from "@/components/ui/metric-card";
 import PageHeader from "@/components/ui/page-header";
 import { getStatusLabel } from "@/lib/application-status";
+import { getCurrentUserRecord } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
 
 export default async function CompaniesPage() {
-  const [companies, totalApplications, activeCompanies] = await Promise.all([
-    prisma.company.findMany({
-      select: {
-        id: true,
-        name: true,
-        createdAt: true,
-        _count: {
-          select: { applications: true },
-        },
-        applications: {
-          orderBy: [{ dateApplied: "desc" }, { createdAt: "desc" }],
-          take: 4,
+  const currentUser = await getCurrentUserRecord();
+  const ownerId = currentUser?.user.id;
+
+  const [companies, totalApplications, activeCompanies] = ownerId
+    ? await Promise.all([
+        prisma.company.findMany({
+          where: { ownerId },
           select: {
             id: true,
-            role: true,
-            status: true,
-            dateApplied: true,
-            resume: {
-              select: { name: true },
+            name: true,
+            createdAt: true,
+            _count: {
+              select: { applications: true },
+            },
+            applications: {
+              orderBy: [{ dateApplied: "desc" }, { createdAt: "desc" }],
+              take: 4,
+              select: {
+                id: true,
+                role: true,
+                status: true,
+                dateApplied: true,
+                resume: {
+                  select: { name: true },
+                },
+              },
             },
           },
-        },
-      },
-      orderBy: { name: "asc" },
-    }),
-    prisma.application.count(),
-    prisma.company.count({
-      where: {
-        applications: {
-          some: {
-            status: {
-              in: ["applied", "interview"],
+          orderBy: { name: "asc" },
+        }),
+        prisma.application.count({ where: { ownerId } }),
+        prisma.company.count({
+          where: {
+            ownerId,
+            applications: {
+              some: {
+                status: {
+                  in: ["applied", "interview"],
+                },
+              },
             },
           },
-        },
-      },
-    }),
-  ]);
+        }),
+      ])
+    : [[], 0, 0];
 
   return (
     <div className="mx-auto max-w-[1400px] space-y-5">

@@ -237,7 +237,7 @@ export default function ResumeManager({
                 <a
                   href={resume.fileUrl}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:underline"
                 >
                   <FiExternalLink className="h-4 w-4" />

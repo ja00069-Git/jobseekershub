@@ -6,7 +6,10 @@ import {
   normalizeApplicationStatus,
   type ApplicationStatus,
 } from "@/lib/application-status";
+import { getCurrentUserRecord } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
+import { enforceRateLimit } from "@/lib/rate-limit";
+import { validateTrustedOrigin } from "@/lib/request-security";
 
 const handlePrismaError = (error: unknown) => {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -70,8 +73,15 @@ const parseDateApplied = (value: unknown) => {
 };
 
 export async function GET() {
+  const currentUser = await getCurrentUserRecord();
+
+  if (!currentUser) {
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  }
+
   try {
     const applications = await prisma.application.findMany({
+      where: { ownerId: currentUser.user.id },
       select: {
         id: true,
         company: true,
@@ -95,6 +105,22 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const currentUser = await getCurrentUserRecord();
+
+  if (!currentUser) {
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  }
+
+  const originError = validateTrustedOrigin(request);
+  if (originError) return originError;
+
+  const rateLimitError = enforceRateLimit({
+    key: `applications:create:${currentUser.user.id}`,
+    limit: 60,
+    windowMs: 60_000,
+  });
+  if (rateLimitError) return rateLimitError;
+
   let payload: CreateApplicationPayload;
 
   try {
@@ -138,11 +164,20 @@ export async function POST(request: Request) {
   }
 
   try {
+    const ownerId = currentUser.user.id;
     const companyName = payload.company.trim();
     const companyRecord = await prisma.company.upsert({
-      where: { name: companyName },
+      where: {
+        ownerId_name: {
+          ownerId,
+          name: companyName,
+        },
+      },
       update: {},
-      create: { name: companyName },
+      create: {
+        name: companyName,
+        ownerId,
+      },
     });
 
     const application = await prisma.application.create({
@@ -153,6 +188,7 @@ export async function POST(request: Request) {
         source: parseOptionalString(payload.source),
         dateApplied,
         notes: parseOptionalString(payload.notes),
+        ownerId,
         companyId: companyRecord.id,
         resumeId: parseOptionalString(payload.resumeId),
       },
@@ -165,6 +201,22 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
+  const currentUser = await getCurrentUserRecord();
+
+  if (!currentUser) {
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  }
+
+  const originError = validateTrustedOrigin(request);
+  if (originError) return originError;
+
+  const rateLimitError = enforceRateLimit({
+    key: `applications:update:${currentUser.user.id}`,
+    limit: 120,
+    windowMs: 60_000,
+  });
+  if (rateLimitError) return rateLimitError;
+
   let payload: { id?: unknown; status?: unknown; resumeId?: unknown };
 
   try {
@@ -223,8 +275,21 @@ export async function PATCH(request: Request) {
   }
 
   try {
+    const targetId = payload.id.trim();
+    const existing = await prisma.application.findFirst({
+      where: {
+        id: targetId,
+        ownerId: currentUser.user.id,
+      },
+      select: { id: true },
+    });
+
+    if (!existing) {
+      return NextResponse.json({ error: "Not found." }, { status: 404 });
+    }
+
     const updated = await prisma.application.update({
-      where: { id: payload.id.trim() },
+      where: { id: targetId },
       data: updateData,
       include: {
         resume: {
@@ -240,6 +305,22 @@ export async function PATCH(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+  const currentUser = await getCurrentUserRecord();
+
+  if (!currentUser) {
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  }
+
+  const originError = validateTrustedOrigin(request);
+  if (originError) return originError;
+
+  const rateLimitError = enforceRateLimit({
+    key: `applications:delete:${currentUser.user.id}`,
+    limit: 30,
+    windowMs: 60_000,
+  });
+  if (rateLimitError) return rateLimitError;
+
   let payload: { id?: unknown };
 
   try {
@@ -259,9 +340,16 @@ export async function DELETE(request: Request) {
   }
 
   try {
-    await prisma.application.delete({
-      where: { id: payload.id.trim() },
+    const deleted = await prisma.application.deleteMany({
+      where: {
+        id: payload.id.trim(),
+        ownerId: currentUser.user.id,
+      },
     });
+
+    if (deleted.count === 0) {
+      return NextResponse.json({ error: "Not found." }, { status: 404 });
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
