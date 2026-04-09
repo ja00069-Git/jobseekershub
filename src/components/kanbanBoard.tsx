@@ -149,19 +149,24 @@ export default function KanbanBoard({
   }
 
   const board = (
-    <div className="w-full overflow-x-auto">
-      <div className="grid min-w-[1020px] grid-cols-6 gap-3">
-        {KANBAN_COLUMNS.map((option) => (
-          <Column
-            key={option.value}
-            status={option.value}
-            items={items}
-            color={option.color}
-            draggable={isMounted}
-            resumes={resumes}
-            onResumeChange={handleResumeChange}
-          />
-        ))}
+    <div className="space-y-2">
+      <p className="px-1 text-xs text-slate-500 dark:text-slate-400 lg:hidden">
+        Swipe sideways to view each stage of your application pipeline.
+      </p>
+      <div className="w-full overflow-x-auto pb-2">
+        <div className="grid min-w-[960px] grid-cols-6 gap-3">
+          {KANBAN_COLUMNS.map((option) => (
+            <Column
+              key={option.value}
+              status={option.value}
+              items={items}
+              color={option.color}
+              draggable={isMounted}
+              resumes={resumes}
+              onResumeChange={handleResumeChange}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -179,8 +184,8 @@ export default function KanbanBoard({
 
 function KanbanSkeleton() {
   return (
-    <div className="w-full overflow-x-auto">
-      <div className="grid min-w-[1020px] grid-cols-6 gap-3">
+    <div className="w-full overflow-x-auto pb-2">
+      <div className="grid min-w-[960px] grid-cols-6 gap-3">
         {KANBAN_COLUMNS.map((option) => (
           <section
             key={option.value}
@@ -232,7 +237,7 @@ function Column({
   return (
     <section
       ref={setNodeRef}
-      className={`flex min-h-[300px] flex-col rounded-[22px] border p-2.5 transition ${
+      className={`flex min-h-[300px] snap-start flex-col rounded-[22px] border p-2.5 transition ${
         isOver
           ? "border-blue-300 bg-blue-50/80 dark:border-blue-700 dark:bg-blue-950/30"
           : "border-slate-200 bg-slate-50/70 dark:border-slate-800 dark:bg-slate-900/60"

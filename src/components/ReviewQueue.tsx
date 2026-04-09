@@ -124,7 +124,7 @@ export default function ReviewQueue() {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div className="ui-animate-enter flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
             Emails to review
@@ -221,7 +221,7 @@ function Card({
   const canApprove = company.trim().length > 0 && role.trim().length > 0;
 
   return (
-    <article className="ui-surface-card p-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-lg sm:p-5">
+    <article className="ui-surface-card ui-animate-enter ui-hover-lift p-4 sm:p-5">
       <div className="flex flex-col gap-3.5">
         <div className="flex items-start justify-between gap-3">
           <div>

@@ -122,7 +122,7 @@ export default function ResumeManager({
     <div className="grid gap-5 xl:grid-cols-[360px_minmax(0,1fr)]">
       <form
         onSubmit={handleSubmit}
-        className="ui-surface-card p-5 xl:sticky xl:top-6"
+        className="ui-surface-card ui-animate-enter p-5 xl:sticky xl:top-6"
       >
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-600 dark:text-blue-300">
           Resumes
@@ -181,8 +181,8 @@ export default function ResumeManager({
         </button>
       </form>
 
-      <section className="ui-surface-card p-5">
-        <div className="flex items-center justify-between gap-3">
+      <section className="ui-surface-card ui-animate-enter p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">
               Saved resumes
@@ -205,9 +205,9 @@ export default function ResumeManager({
             {resumes.map((resume) => (
               <article
                 key={resume.id}
-                className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 transition hover:-translate-y-0.5 hover:bg-white hover:shadow-sm dark:border-slate-700 dark:bg-slate-800/70 dark:hover:bg-slate-800"
+                className="ui-surface-soft ui-animate-enter ui-hover-lift p-4"
               >
-                <div className="flex items-start justify-between gap-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <div className="inline-flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
                       <FiFileText className="h-4 w-4 text-slate-500 dark:text-slate-400" />
@@ -227,7 +227,7 @@ export default function ResumeManager({
                     type="button"
                     onClick={() => void handleDelete(resume.id)}
                     disabled={deletingId === resume.id}
-                    className="ui-btn-secondary"
+                    className="ui-btn-secondary self-start"
                   >
                     <FiTrash2 className="h-3.5 w-3.5" />
                     {deletingId === resume.id ? "Removing..." : "Remove"}

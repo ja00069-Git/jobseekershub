@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# JobHuntHQ
 
-## Getting Started
+JobHuntHQ is a job search tracker built with **Next.js**, **Prisma**, and **PostgreSQL**. It helps you organize applications, review job emails from Gmail, track companies, and manage resume versions in one place.
 
-First, run the development server:
+## Features
+
+- **Dashboard** for quick job-search visibility
+- **Applications board** with Kanban-style status management
+- **Review queue** for Gmail-based job email approvals
+- **Companies page** for company-level history
+- **Resumes page** with per-resume linked application counts
+- **Light and dark mode** support
+
+## Tech stack
+
+- Next.js 16 App Router
+- React 19
+- Prisma 7
+- PostgreSQL
+- NextAuth with Google sign-in
+- Tailwind CSS 4
+
+## Environment setup
+
+Copy the example environment file and fill in your values:
+
+```bash
+cp .env.example .env
+```
+
+Required variables:
+
+- `DATABASE_URL`
+- `NEXTAUTH_URL`
+- `NEXTAUTH_SECRET`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+
+## Install and run
+
+```bash
+npm install
+npm run dev
+```
+
+Open `http://localhost:3000`.
+
+## Useful scripts
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run build
+npm run start
+npm run lint
+npm run prisma:generate
+npm run db:seed
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Production readiness notes
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Before deployment, make sure:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- database credentials are set correctly
+- Google OAuth redirect URLs match your deployment URL
+- `NEXTAUTH_SECRET` is set to a long random value
+- `npm run build` passes cleanly
 
-## Learn More
+## App routes
 
-To learn more about Next.js, take a look at the following resources:
+- `/` — dashboard
+- `/applications` — application tracker
+- `/review` — review Gmail job emails
+- `/companies` — company activity
+- `/resumes` — resume library
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

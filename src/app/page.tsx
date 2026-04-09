@@ -84,7 +84,7 @@ export default async function DashboardPage() {
       </div>
 
       <div>
-        <section className="ui-surface-card p-3.5 sm:p-4">
+        <section className="ui-surface-card ui-animate-enter ui-hover-lift p-3.5 sm:p-4">
           <div className="mb-4 flex items-center justify-between gap-3">
             <div>
               <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">

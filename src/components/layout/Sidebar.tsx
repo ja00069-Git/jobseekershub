@@ -82,7 +82,7 @@ export default function Sidebar() {
               key={link.name}
               href={link.href}
               title={collapsed ? link.name : undefined}
-              className={`flex items-center rounded-xl px-3 py-2.5 text-sm font-medium transition ${
+              className={`ui-nav-item flex items-center rounded-xl px-3 py-2.5 text-sm font-medium ${
                 collapsed ? "justify-center px-0" : "gap-3"
               } ${
                 active

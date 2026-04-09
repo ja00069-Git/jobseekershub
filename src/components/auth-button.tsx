@@ -137,7 +137,8 @@ export default function AuthButton() {
           fill="#EA4335"
         />
       </svg>
-      Continue with Google
+      <span className="sm:hidden">Sign in</span>
+      <span className="hidden sm:inline">Continue with Google</span>
     </button>
   );
 }

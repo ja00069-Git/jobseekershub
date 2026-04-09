@@ -29,7 +29,7 @@ export default function PageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <section className="ui-surface-card p-4 sm:p-5">
+    <section className="ui-surface-card ui-animate-enter p-4 sm:p-5">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div className="max-w-3xl space-y-1.5">
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">

@@ -27,7 +27,7 @@ export default function MetricCard({
   helper?: string;
 }) {
   return (
-    <div className="ui-surface-card px-3.5 py-3">
+    <div className="ui-surface-card ui-hover-lift ui-animate-enter px-3.5 py-3">
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
           <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">{label}</p>

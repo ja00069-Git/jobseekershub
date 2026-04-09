@@ -25,6 +25,10 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   min-height: 100vh;
   background:
@@ -47,14 +51,38 @@ html.dark body {
   background: rgba(59, 130, 246, 0.18);
 }
 
+@keyframes ui-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @layer components {
   .ui-surface-card {
-    @apply rounded-2xl border border-slate-200/80 bg-white/85 backdrop-blur-sm dark:border-slate-800/80 dark:bg-slate-900/80;
+    @apply rounded-2xl border border-slate-200/80 bg-white/85 backdrop-blur-sm transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out dark:border-slate-800/80 dark:bg-slate-900/80;
     box-shadow: 0 12px 28px -18px rgba(15, 23, 42, 0.28);
   }
 
   .ui-surface-soft {
-    @apply rounded-2xl border border-slate-200/70 bg-slate-50/80 dark:border-slate-800/70 dark:bg-slate-900/60;
+    @apply rounded-2xl border border-slate-200/70 bg-slate-50/80 transition-colors duration-200 ease-out dark:border-slate-800/70 dark:bg-slate-900/60;
+  }
+
+  .ui-animate-enter {
+    animation: ui-fade-up 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .ui-hover-lift {
+    @apply motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-md;
+  }
+
+  .ui-nav-item {
+    @apply transition-all duration-200 ease-out motion-safe:hover:translate-x-0.5;
   }
 
   .ui-input {
@@ -62,19 +90,19 @@ html.dark body {
   }
 
   .ui-btn-primary {
-    @apply inline-flex h-10 min-h-10 shrink-0 whitespace-nowrap items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-blue-500 dark:hover:bg-blue-400;
+    @apply inline-flex h-10 min-h-10 shrink-0 whitespace-nowrap items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white shadow-sm transition-all duration-200 ease-out motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-md motion-safe:active:translate-y-0 dark:bg-blue-500 dark:hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-60;
   }
 
   .ui-btn-secondary {
-    @apply inline-flex h-10 min-h-10 shrink-0 whitespace-nowrap items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white/85 px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900/75 dark:text-slate-200 dark:hover:bg-slate-800;
+    @apply inline-flex h-10 min-h-10 shrink-0 whitespace-nowrap items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white/85 px-4 text-sm font-semibold text-slate-700 shadow-sm transition-all duration-200 ease-out motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-md motion-safe:active:translate-y-0 dark:border-slate-700 dark:bg-slate-900/75 dark:text-slate-200 dark:hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60;
   }
 
   .ui-btn-link {
-    @apply inline-flex h-10 shrink-0 whitespace-nowrap items-center text-sm font-semibold text-slate-600 underline-offset-4 transition hover:text-slate-900 hover:underline dark:text-slate-300 dark:hover:text-slate-100;
+    @apply inline-flex h-10 shrink-0 whitespace-nowrap items-center text-sm font-semibold text-slate-600 transition-all duration-200 ease-out hover:text-slate-900 hover:underline motion-safe:hover:translate-x-0.5 underline-offset-4 dark:text-slate-300 dark:hover:text-slate-100;
   }
 
   .ui-icon-btn {
-    @apply inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white/85 text-slate-600 transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900/75 dark:text-slate-300 dark:hover:bg-slate-800;
+    @apply inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white/85 text-slate-600 shadow-sm transition-all duration-200 ease-out motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-md dark:border-slate-700 dark:bg-slate-900/75 dark:text-slate-300 dark:hover:bg-slate-800;
   }
 
   .ui-badge {
@@ -92,4 +120,14 @@ html.dark body {
 
 html.dark .ui-surface-card {
   box-shadow: 0 18px 38px -24px rgba(2, 6, 23, 0.7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .ui-animate-enter {
+    animation: none;
+  }
 }
