@@ -44,16 +44,16 @@ if (process.env.NODE_ENV === "production" && /localhost|127\.0\.0\.1/i.test(data
   problems.push("DATABASE_URL should not point to localhost in production.");
 }
 
-if (/replace-with-a-long-random-secret/i.test(nextAuthSecret)) {
-  problems.push("NEXTAUTH_SECRET is still using the example placeholder value.");
+if (/replace-with-a-long-random-secret|development-only-secret-not-for-production/i.test(nextAuthSecret)) {
+  problems.push("NEXTAUTH_SECRET is using a non-production default.");
 }
 
-if (/your-google-client-id|your-google-client-secret/i.test(`${process.env.GOOGLE_CLIENT_ID} ${process.env.GOOGLE_CLIENT_SECRET}`)) {
-  problems.push("Google OAuth credentials are still using example placeholder values.");
+if (/your-google-client-id|your-google-client-secret|google-oauth-client-id|google-oauth-client-secret/i.test(`${process.env.GOOGLE_CLIENT_ID} ${process.env.GOOGLE_CLIENT_SECRET}`)) {
+  problems.push("Google OAuth credentials are using non-production defaults.");
 }
 
 if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
-  warnings.push("NODE_ENV is not set to production. This is fine for local testing, but change it before launch.");
+  warnings.push("NODE_ENV is not set to production. Local development is expected; set production in hosting for go-live.");
 }
 
 if (warnings.length > 0) {

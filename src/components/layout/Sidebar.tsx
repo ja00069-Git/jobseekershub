@@ -9,6 +9,7 @@ import {
   FiFileText,
   FiHome,
   FiInbox,
+  FiShield,
 } from "react-icons/fi";
 import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
 import Link from "next/link";
@@ -20,6 +21,7 @@ const links: Array<{ name: string; href: string; icon: IconType }> = [
   { name: "Review", href: "/review", icon: FiInbox },
   { name: "Companies", href: "/companies", icon: HiOutlineBuildingOffice2 },
   { name: "Resumes", href: "/resumes", icon: FiFileText },
+  { name: "Privacy", href: "/privacy", icon: FiShield },
 ];
 
 export default function Sidebar() {
