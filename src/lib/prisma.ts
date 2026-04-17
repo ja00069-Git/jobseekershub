@@ -1,5 +1,3 @@
-import { PrismaPg } from "@prisma/adapter-pg";
-
 import { PrismaClient } from "@prisma/client";
 
 const globalForPrisma = globalThis as {
@@ -9,15 +7,11 @@ const globalForPrisma = globalThis as {
 // Keep a single Prisma client during development hot reloads so we avoid
 // opening extra database connections between refreshes.
 const createPrismaClient = () => {
-  const connectionString = process.env.DATABASE_URL;
-
-  if (!connectionString) {
+  if (!process.env.DATABASE_URL) {
     throw new Error("DATABASE_URL is not set");
   }
 
-  return new PrismaClient({
-    adapter: new PrismaPg({ connectionString }),
-  });
+  return new PrismaClient();
 };
 
 // Next.js dev mode can temporarily hold onto an older generated client after
