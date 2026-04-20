@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { FiChevronDown, FiLogOut } from "react-icons/fi";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 function getInitials(name?: string | null, email?: string | null) {
   const base = name?.trim() || email?.split("@")[0] || "User";
@@ -17,6 +18,7 @@ function getInitials(name?: string | null, email?: string | null) {
 
 export default function AuthButton() {
   const { data: session, status } = useSession();
+  const router = useRouter();
   const mounted = useSyncExternalStore(
     () => () => {},
     () => true,
@@ -95,7 +97,7 @@ export default function AuthButton() {
 
             <button
               type="button"
-              onClick={() => void signOut()}
+              onClick={() => void signOut({ callbackUrl: "/auth" })}
               className="ui-btn-secondary mt-3 w-full"
               role="menuitem"
             >
@@ -111,7 +113,7 @@ export default function AuthButton() {
   return (
     <button
       type="button"
-      onClick={() => void signIn("google")}
+      onClick={() => router.push("/auth")}
       className="ui-btn-secondary text-slate-900 hover:-translate-y-0.5 hover:shadow-md dark:text-slate-100"
     >
       <svg

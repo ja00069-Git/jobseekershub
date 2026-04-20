@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
 
 import AuthProvider from "@/components/auth-provider";
 import SidebarShell from "@/components/layout/SidebarShell";
+import ThemeHydrator from "@/components/layout/ThemeHydrator";
 import TopBar from "@/components/layout/TopBar";
 import "./globals.css";
 
@@ -35,16 +35,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body suppressHydrationWarning className="text-slate-900 dark:text-slate-100">
-        {/* Apply the saved theme before hydration to avoid a light/dark flash. */}
-        <Script id="theme-init" strategy="beforeInteractive">
-          {`try {
-  const savedTheme = localStorage.getItem('theme');
-  const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const isDark = savedTheme ? savedTheme === 'dark' : systemPrefersDark;
-  document.documentElement.classList.toggle('dark', isDark);
-  document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
-} catch {}`}
-        </Script>
+        <ThemeHydrator />
 
         <AuthProvider>
           <div className="flex min-h-screen">

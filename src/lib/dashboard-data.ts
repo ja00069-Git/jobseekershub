@@ -6,8 +6,71 @@ export type DashboardApplication = {
   company: string;
   role: string;
   status: string;
+  source: string | null;
   createdAt: string;
 };
+
+export type DashboardSnapshot = {
+  isAuthenticated: boolean;
+  applications: DashboardApplication[];
+  pendingImports: number;
+  companies: number;
+  resumes: number;
+};
+
+export async function getDashboardSnapshot(): Promise<DashboardSnapshot> {
+  const currentUser = await getCurrentUserRecord();
+
+  if (!currentUser) {
+    return {
+      isAuthenticated: false,
+      applications: [],
+      pendingImports: 0,
+      companies: 0,
+      resumes: 0,
+    };
+  }
+
+  const ownerId = currentUser.user.id;
+
+  const [applications, pendingImports, companies, resumes] = await Promise.all([
+    prisma.application.findMany({
+      where: { ownerId },
+      select: {
+        id: true,
+        company: true,
+        role: true,
+        status: true,
+        source: true,
+        createdAt: true,
+      },
+      orderBy: [{ createdAt: "desc" }],
+    }),
+    prisma.importedEmail.count({
+      where: {
+        reviewed: false,
+        ownerId,
+      },
+    }),
+    prisma.company.count({ where: { ownerId } }),
+    prisma.resume.count({ where: { ownerId } }),
+  ]);
+
+  return {
+    isAuthenticated: true,
+    applications: applications.map((application) => ({
+      id: application.id,
+      company: application.company,
+      role: application.role,
+      status: application.status,
+      source: application.source,
+      createdAt: application.createdAt.toISOString(),
+    })),
+    pendingImports,
+    companies,
+    resumes,
+  };
+}
 
 export async function getApplications(): Promise<DashboardApplication[]> {
   const currentUser = await getCurrentUserRecord();
@@ -23,6 +86,7 @@ export async function getApplications(): Promise<DashboardApplication[]> {
       company: true,
       role: true,
       status: true,
+      source: true,
       createdAt: true,
     },
     orderBy: [{ createdAt: "desc" }],
@@ -33,6 +97,7 @@ export async function getApplications(): Promise<DashboardApplication[]> {
     company: application.company,
     role: application.role,
     status: application.status,
+    source: application.source,
     createdAt: application.createdAt.toISOString(),
   }));
 }

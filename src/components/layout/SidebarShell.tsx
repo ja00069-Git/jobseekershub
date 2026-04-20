@@ -1,14 +1,23 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
 
 const Sidebar = dynamic(() => import("./Sidebar"), {
   ssr: false,
-  loading: () => (
-    <aside className="sticky top-0 hidden h-screen w-20 shrink-0 border-r border-slate-200/80 bg-white/75 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/45 lg:flex lg:flex-col" />
-  ),
+  loading: () => null,
 });
 
 export default function SidebarShell() {
+  const pathname = usePathname();
+  const { data: session, status } = useSession();
+  const isPublicVisitor = status !== "loading" && !session?.user;
+  const isPublicRoute = pathname === "/" || pathname === "/auth" || pathname === "/privacy";
+
+  if (isPublicVisitor && isPublicRoute) {
+    return null;
+  }
+
   return <Sidebar />;
 }

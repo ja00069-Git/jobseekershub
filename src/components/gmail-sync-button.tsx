@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 type MessageTone = "info" | "success" | "error";
@@ -92,7 +92,7 @@ export default function GmailSyncButton() {
     return (
       <button
         type="button"
-        onClick={() => void signIn("google", { callbackUrl: "/review" })}
+        onClick={() => router.push("/auth?callbackUrl=%2Freview")}
         className="ui-btn-primary min-w-[170px] justify-center"
       >
         Connect Gmail

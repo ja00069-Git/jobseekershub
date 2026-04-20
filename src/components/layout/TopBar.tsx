@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { FiBriefcase, FiFileText, FiHome, FiInbox } from "react-icons/fi";
 import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
@@ -18,6 +19,15 @@ const mobileLinks = [
 
 export default function TopBar() {
   const pathname = usePathname();
+  const { data: session, status } = useSession();
+  const isPublicVisitor = status !== "loading" && !session?.user;
+  const isPublicHome = isPublicVisitor && pathname === "/";
+  const isPublicRoute = pathname === "/" || pathname === "/auth" || pathname === "/privacy";
+  const hideTopBar = isPublicVisitor && isPublicRoute;
+
+  if (hideTopBar) {
+    return null;
+  }
 
   return (
     <header className="sticky top-0 z-30 border-b border-white/40 bg-white/30 backdrop-blur-xl dark:border-slate-800/80 dark:bg-slate-950/35">
@@ -25,20 +35,28 @@ export default function TopBar() {
         <div className="ui-animate-enter flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
             <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
-              Focused workspace
+              {isPublicHome ? "JobHuntHQ" : "Focused workspace"}
             </p>
             <p className="mt-1 text-xs text-slate-600 dark:text-slate-300 sm:text-sm">
-              Keep applications, job emails, and resumes aligned in one place.
+              {isPublicHome
+                ? "Track applications, emails, and resumes in one organized place."
+                : "Keep applications, job emails, and resumes aligned in one place."}
             </p>
           </div>
 
           <div className="flex shrink-0 items-center gap-2 self-start sm:self-auto">
             <ThemeToggle />
-            <AuthButton />
+            {isPublicHome ? (
+              <Link href="/auth" className="ui-btn-secondary">
+                Sign in
+              </Link>
+            ) : (
+              <AuthButton />
+            )}
           </div>
         </div>
 
-        <nav className="mt-3 flex gap-2 overflow-x-auto pb-1 lg:hidden" aria-label="Mobile navigation">
+        <nav className={`mt-3 flex gap-2 overflow-x-auto pb-1 lg:hidden ${isPublicHome ? "hidden" : ""}`} aria-label="Mobile navigation">
           {mobileLinks.map((link) => {
             const Icon = link.icon;
             const active = pathname === link.href;

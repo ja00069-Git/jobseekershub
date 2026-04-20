@@ -4,39 +4,63 @@ import { FiArrowRight, FiBriefcase, FiInbox, FiPercent, FiTarget, FiTrendingUp, 
 import MetricCard from "@/components/ui/metric-card";
 import PageHeader from "@/components/ui/page-header";
 import { getStatusLabel } from "@/lib/application-status";
-import { getCurrentUserRecord } from "@/lib/current-user";
-import { prisma } from "@/lib/prisma";
+import { getDashboardSnapshot } from "@/lib/dashboard-data";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const currentUser = await getCurrentUserRecord();
-  const ownerId = currentUser?.user.id;
+  const snapshot = await getDashboardSnapshot();
 
-  const [applications, pendingImports, companies, resumes] = ownerId
-    ? await Promise.all([
-        prisma.application.findMany({
-          where: { ownerId },
-          select: {
-            id: true,
-            company: true,
-            role: true,
-            status: true,
-            source: true,
-            createdAt: true,
-          },
-          orderBy: { createdAt: "desc" },
-        }),
-        prisma.importedEmail.count({
-          where: {
-            reviewed: false,
-            ownerId,
-          },
-        }),
-        prisma.company.count({ where: { ownerId } }),
-        prisma.resume.count({ where: { ownerId } }),
-      ])
-    : [[], 0, 0, 0];
+  if (!snapshot.isAuthenticated) {
+    return (
+      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-4">
+        <div className="ui-surface-card ui-animate-enter w-full max-w-[380px] overflow-hidden">
+          {/* Header band */}
+          <div className="border-b border-slate-100 px-7 py-6 dark:border-slate-800">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
+              JobHuntHQ
+            </span>
+            <h1 className="mt-3 text-[1.35rem] font-bold leading-snug tracking-tight text-slate-900 dark:text-slate-100">
+              Your job search,<br />under control.
+            </h1>
+            <p className="mt-2 text-[13px] leading-[1.55] text-slate-500 dark:text-slate-400">
+              Track applications, review job emails, and keep every resume ready — all in one place.
+            </p>
+          </div>
+
+          {/* Feature list */}
+          <div className="divide-y divide-slate-100 px-7 dark:divide-slate-800">
+            {([
+              { icon: "▦", label: "Application pipeline", sub: "Kanban board across every stage" },
+              { icon: "✉", label: "Gmail review queue",   sub: "Import and triage job emails" },
+              { icon: "◧", label: "Resume tracking",      sub: "Attach the right resume each time" },
+            ] as const).map(({ icon, label, sub }) => (
+              <div key={label} className="flex items-start gap-3 py-3.5">
+                <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-sm dark:bg-slate-800">{icon}</span>
+                <div>
+                  <p className="text-[13px] font-semibold text-slate-800 dark:text-slate-200">{label}</p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">{sub}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <div className="border-t border-slate-100 px-7 py-5 dark:border-slate-800">
+            <Link href="/auth" className="ui-btn-primary h-11 w-full justify-center text-[13px]">
+              Get started — it&apos;s free
+            </Link>
+            <p className="mt-3 text-center text-[11px] text-slate-400 dark:text-slate-500">
+              No account required to explore.{" "}
+              <Link href="/privacy" className="underline underline-offset-2 hover:text-slate-600 dark:hover:text-slate-300">Privacy policy</Link>
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const { applications, pendingImports, companies, resumes } = snapshot;
 
   const total = applications.length;
   const active = applications.filter(
