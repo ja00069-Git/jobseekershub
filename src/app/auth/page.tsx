@@ -71,7 +71,7 @@ export default async function AuthPage({
         {/* Header band */}
         <div className="border-b border-slate-100 px-7 py-6 dark:border-slate-800">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
-            JobHuntHQ
+            Job Seekers Hub
           </span>
           <h1 className="mt-3 text-[1.35rem] font-bold leading-snug tracking-tight text-slate-900 dark:text-slate-100">
             Welcome back.

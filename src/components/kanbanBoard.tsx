@@ -183,7 +183,7 @@ export default function KanbanBoard({
 
   return (
     <DndContext
-      id="jobhunthq-kanban"
+      id="jobseekershub-kanban"
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
     >

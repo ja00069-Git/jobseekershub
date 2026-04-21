@@ -46,7 +46,7 @@ export default function GlobalError({
                   App issue
                 </p>
                 <h1 className="mt-2 text-2xl font-semibold text-slate-900 dark:text-slate-100">
-                  JobHuntHQ ran into a problem.
+                  Job Seekers Hub ran into a problem.
                 </h1>
                 <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                   Your saved job search data is still safe. Try again now or return to the dashboard in a moment.

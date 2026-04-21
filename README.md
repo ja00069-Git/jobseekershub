@@ -1,6 +1,6 @@
-# JobHuntHQ
+# Job Seekers Hub
 
-JobHuntHQ is a job-search workspace for keeping applications, hiring emails, companies, and resumes organized in one place.
+Job Seekers Hub is a job-search workspace for keeping applications, hiring emails, companies, and resumes organized in one place.
 
 ## App overview
 
@@ -48,7 +48,7 @@ The app is built around a simple flow:
 
 ## Experience goals
 
-JobHuntHQ is designed to feel:
+Job Seekers Hub is designed to feel:
 
 - **clear** for non-technical users
 - **fast** for everyday tracking

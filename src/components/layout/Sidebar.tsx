@@ -46,7 +46,7 @@ export default function Sidebar() {
                 JH
               </div>
               <div>
-                <h1 className="text-base font-semibold text-slate-900 dark:text-slate-100">JobHuntHQ</h1>
+                <h1 className="text-base font-semibold text-slate-900 dark:text-slate-100">Job Seekers Hub</h1>
                 <p className="text-xs text-slate-500 dark:text-slate-400">Applications, emails, resumes</p>
               </div>
             </div>
