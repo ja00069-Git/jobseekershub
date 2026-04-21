@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "JobHuntHQ — Job Search Tracker",
+  title: "Job Seekers Hub — Job Search Tracker",
   description:
     "Organize your applications, review job emails, track companies, and keep your resumes ready in one place.",
 };
@@ -32,6 +32,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
+      data-scroll-behavior="smooth"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body suppressHydrationWarning className="text-slate-900 dark:text-slate-100">

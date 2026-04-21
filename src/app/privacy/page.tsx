@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | JobHuntHQ",
-  description: "How JobHuntHQ collects, uses, and protects your data.",
+  title: "Privacy Policy | Job Seekers Hub",
+  description: "How Job Seekers Hub collects, uses, and protects your data.",
 };
 
 export default function PrivacyPage() {
@@ -20,7 +20,7 @@ export default function PrivacyPage() {
 
       <article className="ui-surface-card space-y-5 p-5 text-sm leading-6 text-slate-700 dark:text-slate-300 sm:p-6">
         <p>
-          JobHuntHQ helps you organize job applications, resumes, companies, and job-related email imports.
+          Job Seekers Hub helps you organize job applications, resumes, companies, and job-related email imports.
           This policy explains what we collect, how we use it, and your choices.
         </p>
 
@@ -73,9 +73,9 @@ export default function PrivacyPage() {
         <section className="space-y-2">
           <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">6. Contact</h2>
           <p>
-            Privacy requests: privacy@jobhunthq.com
+            Privacy requests: privacy@jobseekershub.com
             <br />
-            Company: JobHuntHQ
+            Company: Job Seekers Hub
           </p>
         </section>
       </article>

@@ -20,9 +20,14 @@ const mobileLinks = [
 export default function TopBar() {
   const pathname = usePathname();
   const { data: session, status } = useSession();
-  const isPublicVisitor = status !== "loading" && !session?.user;
-  const isPublicHome = isPublicVisitor && pathname === "/";
   const isPublicRoute = pathname === "/" || pathname === "/auth" || pathname === "/privacy";
+
+  if (isPublicRoute && status === "loading") {
+    return null;
+  }
+
+  const isPublicVisitor = !session?.user;
+  const isPublicHome = isPublicVisitor && pathname === "/";
   const hideTopBar = isPublicVisitor && isPublicRoute;
 
   if (hideTopBar) {
@@ -35,7 +40,7 @@ export default function TopBar() {
         <div className="ui-animate-enter flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
             <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
-              {isPublicHome ? "JobHuntHQ" : "Focused workspace"}
+              {isPublicHome ? "Job Seekers Hub" : "Focused workspace"}
             </p>
             <p className="mt-1 text-xs text-slate-600 dark:text-slate-300 sm:text-sm">
               {isPublicHome
