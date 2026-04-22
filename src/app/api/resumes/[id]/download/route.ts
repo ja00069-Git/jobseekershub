@@ -1,6 +1,12 @@
 import { get } from "@vercel/blob";
 import { NextResponse } from "next/server";
 
+import {
+  badRequestResponse,
+  handleRouteError,
+  notFoundResponse,
+  unauthorizedResponse,
+} from "@/lib/api-error";
 import { getCurrentUserRecord } from "@/lib/current-user";
 
 type RouteContext = {
@@ -21,13 +27,13 @@ export async function GET(_request: Request, context: RouteContext) {
   const currentUser = await getCurrentUserRecord();
 
   if (!currentUser) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   const { id } = await context.params;
 
   if (!id?.trim()) {
-    return NextResponse.json({ error: "id is required." }, { status: 400 });
+    return badRequestResponse("id is required.", "missing_id");
   }
 
   const { prisma } = await import("@/lib/prisma");
@@ -44,7 +50,7 @@ export async function GET(_request: Request, context: RouteContext) {
   });
 
   if (!resume) {
-    return NextResponse.json({ error: "Not found." }, { status: 404 });
+    return notFoundResponse();
   }
 
   if (!isBlobUrl(resume.fileUrl)) {
@@ -57,7 +63,7 @@ export async function GET(_request: Request, context: RouteContext) {
     });
 
     if (!result || result.statusCode !== 200 || !result.stream) {
-      return NextResponse.json({ error: "File not found." }, { status: 404 });
+      return notFoundResponse("File not found.", "file_not_found");
     }
 
     return new Response(result.stream, {
@@ -68,7 +74,11 @@ export async function GET(_request: Request, context: RouteContext) {
         "Cache-Control": "private, no-store",
       },
     });
-  } catch {
-    return NextResponse.json({ error: "Failed to load file." }, { status: 500 });
+  } catch (error) {
+    return handleRouteError(error, {
+      label: "resumes.download",
+      fallbackMessage: "Failed to load file.",
+      fallbackCode: "resume_download_failed",
+    });
   }
 }

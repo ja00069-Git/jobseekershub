@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 
 import type { Status } from "@prisma/client";
+import {
+  errorResponse,
+  handleRouteError,
+  unauthorizedResponse,
+} from "@/lib/api-error";
 import { getCurrentUserRecord } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
 import { enforceRateLimit } from "@/lib/rate-limit";
@@ -425,10 +430,7 @@ export async function GET(request: Request) {
     const currentUser = await getCurrentUserRecord();
 
     if (!currentUser?.session.accessToken) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return unauthorizedResponse("Unauthorized.");
     }
 
     const originError = validateTrustedOrigin(request);
@@ -458,10 +460,11 @@ export async function GET(request: Request) {
     );
 
     if (!listRes.ok) {
-      return NextResponse.json(
-        { error: "Gmail sync failed." },
-        { status: 502 },
-      );
+      return errorResponse({
+        status: 502,
+        code: "gmail_upstream_error",
+        message: "Gmail sync failed.",
+      });
     }
 
     const listData = (await listRes.json()) as GmailListResponse;
@@ -582,12 +585,11 @@ export async function GET(request: Request) {
     );
 
     return NextResponse.json(parsed.filter(Boolean));
-  } catch {
-    return NextResponse.json(
-      {
-        error: "Gmail sync failed.",
-      },
-      { status: 500 }
-    );
+  } catch (error) {
+    return handleRouteError(error, {
+      label: "gmail.sync",
+      fallbackMessage: "Gmail sync failed.",
+      fallbackCode: "gmail_sync_failed",
+    });
   }
 }

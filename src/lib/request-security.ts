@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { forbiddenResponse } from "@/lib/api-error";
 
 export function validateTrustedOrigin(request: Request) {
   const isSafeMethod = ["GET", "HEAD", "OPTIONS"].includes(request.method);
@@ -6,7 +6,7 @@ export function validateTrustedOrigin(request: Request) {
 
   if (!origin) {
     return process.env.NODE_ENV === "production" && !isSafeMethod
-      ? NextResponse.json({ error: "Invalid origin." }, { status: 403 })
+      ? forbiddenResponse("Invalid origin.", "invalid_origin")
       : null;
   }
 
@@ -32,5 +32,5 @@ export function validateTrustedOrigin(request: Request) {
 
   return allowedOrigins.has(origin)
     ? null
-    : NextResponse.json({ error: "Invalid origin." }, { status: 403 });
+    : forbiddenResponse("Invalid origin.", "invalid_origin");
 }

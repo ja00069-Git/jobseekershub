@@ -1,6 +1,11 @@
 import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
 
+import {
+  badRequestResponse,
+  handleRouteError,
+  unauthorizedResponse,
+} from "@/lib/api-error";
 import { getCurrentUserRecord } from "@/lib/current-user";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { validateTrustedOrigin } from "@/lib/request-security";
@@ -25,7 +30,7 @@ export async function POST(request: Request) {
   const currentUser = await getCurrentUserRecord();
 
   if (!currentUser) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   const originError = validateTrustedOrigin(request);
@@ -43,26 +48,23 @@ export async function POST(request: Request) {
     const uploadedFile = formData.get("file");
 
     if (!(uploadedFile instanceof File)) {
-      return NextResponse.json({ error: "A file is required." }, { status: 400 });
+      return badRequestResponse("A file is required.", "missing_file");
     }
 
     if (uploadedFile.size === 0) {
-      return NextResponse.json({ error: "File cannot be empty." }, { status: 400 });
+      return badRequestResponse("File cannot be empty.", "empty_file");
     }
 
     if (uploadedFile.size > MAX_FILE_SIZE_BYTES) {
-      return NextResponse.json(
-        { error: "File must be 10MB or smaller." },
-        { status: 400 },
-      );
+      return badRequestResponse("File must be 10MB or smaller.", "file_too_large");
     }
 
     const extension = getFileExtension(uploadedFile.name);
 
     if (!allowedExtensions.has(extension)) {
-      return NextResponse.json(
-        { error: "Only .pdf, .doc, and .docx files are allowed." },
-        { status: 400 },
+      return badRequestResponse(
+        "Only .pdf, .doc, and .docx files are allowed.",
+        "invalid_file_type",
       );
     }
 
@@ -88,7 +90,10 @@ export async function POST(request: Request) {
       { status: 201 },
     );
   } catch (error) {
-    console.error("Resume upload failed", error);
-    return NextResponse.json({ error: "Failed to upload file." }, { status: 500 });
+    return handleRouteError(error, {
+      label: "resumes.upload",
+      fallbackMessage: "Failed to upload file.",
+      fallbackCode: "resume_upload_failed",
+    });
   }
 }

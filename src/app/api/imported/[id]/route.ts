@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 
+import {
+  handleRouteError,
+  notFoundResponse,
+  unauthorizedResponse,
+} from "@/lib/api-error";
 import { getCurrentUserRecord } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
 import { enforceRateLimit } from "@/lib/rate-limit";
@@ -14,7 +19,7 @@ export async function DELETE(
   const currentUser = await getCurrentUserRecord();
 
   if (!currentUser) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   const originError = validateTrustedOrigin(req);
@@ -38,14 +43,15 @@ export async function DELETE(
     });
 
     if (deleted.count === 0) {
-      return NextResponse.json({ error: "Not found." }, { status: 404 });
+      return notFoundResponse();
     }
 
     return NextResponse.json({ success: true });
-  } catch {
-    return NextResponse.json(
-      { error: "Failed to delete import." },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleRouteError(error, {
+      label: "imports.delete",
+      fallbackMessage: "Failed to delete import.",
+      fallbackCode: "import_delete_failed",
+    });
   }
 }

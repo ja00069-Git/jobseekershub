@@ -1,6 +1,12 @@
 import { del } from "@vercel/blob";
 import { NextResponse } from "next/server";
 
+import {
+  badRequestResponse,
+  handleRouteError,
+  notFoundResponse,
+  unauthorizedResponse,
+} from "@/lib/api-error";
 import { getCurrentUserRecord } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
 import { enforceRateLimit } from "@/lib/rate-limit";
@@ -50,7 +56,7 @@ export async function GET() {
   const currentUser = await getCurrentUserRecord();
 
   if (!currentUser) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   try {
@@ -60,13 +66,12 @@ export async function GET() {
     });
 
     return NextResponse.json(resumes);
-  } catch {
-    return NextResponse.json(
-      {
-        error: "Failed to load resumes.",
-      },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleRouteError(error, {
+      label: "resumes.list",
+      fallbackMessage: "Failed to load resumes.",
+      fallbackCode: "resumes_load_failed",
+    });
   }
 }
 
@@ -74,7 +79,7 @@ export async function POST(request: Request) {
   const currentUser = await getCurrentUserRecord();
 
   if (!currentUser) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   const originError = validateTrustedOrigin(request);
@@ -96,18 +101,15 @@ export async function POST(request: Request) {
       blobPathname?: unknown;
     };
   } catch {
-    return NextResponse.json(
-      { error: "Request body must be valid JSON." },
-      { status: 400 },
-    );
+    return badRequestResponse("Request body must be valid JSON.", "invalid_json");
   }
 
   const fileUrl = parseSafeHttpUrl(payload.fileUrl);
 
   if (!isNonEmptyString(payload.name) || !fileUrl) {
-    return NextResponse.json(
-      { error: "name and a valid http/https fileUrl are required." },
-      { status: 400 },
+    return badRequestResponse(
+      "name and a valid http/https fileUrl are required.",
+      "invalid_resume_payload",
     );
   }
 
@@ -122,13 +124,12 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(resume, { status: 201 });
-  } catch {
-    return NextResponse.json(
-      {
-        error: "Failed to save resume.",
-      },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleRouteError(error, {
+      label: "resumes.create",
+      fallbackMessage: "Failed to save resume.",
+      fallbackCode: "resume_create_failed",
+    });
   }
 }
 
@@ -136,7 +137,7 @@ export async function DELETE(request: Request) {
   const currentUser = await getCurrentUserRecord();
 
   if (!currentUser) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   const originError = validateTrustedOrigin(request);
@@ -154,14 +155,11 @@ export async function DELETE(request: Request) {
   try {
     payload = (await request.json()) as { id?: unknown };
   } catch {
-    return NextResponse.json(
-      { error: "Request body must be valid JSON." },
-      { status: 400 },
-    );
+    return badRequestResponse("Request body must be valid JSON.", "invalid_json");
   }
 
   if (!isNonEmptyString(payload.id)) {
-    return NextResponse.json({ error: "id is required." }, { status: 400 });
+    return badRequestResponse("id is required.", "missing_id");
   }
 
   try {
@@ -180,7 +178,7 @@ export async function DELETE(request: Request) {
     });
 
     if (!resume) {
-      return NextResponse.json({ error: "Not found." }, { status: 404 });
+      return notFoundResponse();
     }
 
     const blobPathname = resume.blobPathname || getBlobPathnameFromUrl(resume.fileUrl);
@@ -207,16 +205,15 @@ export async function DELETE(request: Request) {
     });
 
     if (deleted.count === 0) {
-      return NextResponse.json({ error: "Not found." }, { status: 404 });
+      return notFoundResponse();
     }
 
     return NextResponse.json({ success: true });
-  } catch {
-    return NextResponse.json(
-      {
-        error: "Failed to delete resume.",
-      },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleRouteError(error, {
+      label: "resumes.delete",
+      fallbackMessage: "Failed to delete resume.",
+      fallbackCode: "resume_delete_failed",
+    });
   }
 }

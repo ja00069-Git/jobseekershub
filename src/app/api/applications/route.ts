@@ -1,4 +1,3 @@
-import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 import {
@@ -6,35 +5,16 @@ import {
   normalizeApplicationStatus,
   type ApplicationStatus,
 } from "@/lib/application-status";
+import {
+  badRequestResponse,
+  handleRouteError,
+  notFoundResponse,
+  unauthorizedResponse,
+} from "@/lib/api-error";
 import { getCurrentUserRecord } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { validateTrustedOrigin } from "@/lib/request-security";
-
-const handlePrismaError = (error: unknown) => {
-  if (error instanceof Prisma.PrismaClientKnownRequestError) {
-    // P2002 = unique constraint, P2025 = record not found, etc.
-    console.error("[prisma] known error", error.code, error.message);
-    return NextResponse.json(
-      { error: "Database request failed.", code: error.code },
-      { status: 409 },
-    );
-  }
-
-  if (error instanceof Prisma.PrismaClientInitializationError) {
-    console.error("[prisma] initialization error", error.message);
-    return NextResponse.json(
-      { error: "Database unavailable. Please try again later." },
-      { status: 503 },
-    );
-  }
-
-  console.error("[prisma] unexpected error", error);
-  return NextResponse.json(
-    { error: "An unexpected error occurred." },
-    { status: 500 },
-  );
-};
 
 type CreateApplicationPayload = {
   company?: unknown;
@@ -76,7 +56,7 @@ export async function GET() {
   const currentUser = await getCurrentUserRecord();
 
   if (!currentUser) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   try {
@@ -100,7 +80,11 @@ export async function GET() {
 
     return NextResponse.json(applications);
   } catch (error) {
-    return handlePrismaError(error);
+    return handleRouteError(error, {
+      label: "applications.list",
+      fallbackMessage: "Failed to load applications.",
+      fallbackCode: "applications_load_failed",
+    });
   }
 }
 
@@ -108,7 +92,7 @@ export async function POST(request: Request) {
   const currentUser = await getCurrentUserRecord();
 
   if (!currentUser) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   const originError = validateTrustedOrigin(request);
@@ -126,10 +110,7 @@ export async function POST(request: Request) {
   try {
     payload = (await request.json()) as CreateApplicationPayload;
   } catch {
-    return NextResponse.json(
-      { error: "Request body must be valid JSON." },
-      { status: 400 },
-    );
+    return badRequestResponse("Request body must be valid JSON.", "invalid_json");
   }
 
   if (
@@ -138,7 +119,7 @@ export async function POST(request: Request) {
     !isNonEmptyString(payload.status)
   ) {
     return NextResponse.json(
-      { error: "company, role, and status are required." },
+      { error: "company, role, and status are required.", code: "missing_required_fields" },
       { status: 400 },
     );
   }
@@ -158,7 +139,7 @@ export async function POST(request: Request) {
 
   if (!dateApplied) {
     return NextResponse.json(
-      { error: "dateApplied must be a valid date string." },
+      { error: "dateApplied must be a valid date string.", code: "invalid_date_applied" },
       { status: 400 },
     );
   }
@@ -196,7 +177,11 @@ export async function POST(request: Request) {
 
     return NextResponse.json(application, { status: 201 });
   } catch (error) {
-    return handlePrismaError(error);
+    return handleRouteError(error, {
+      label: "applications.create",
+      fallbackMessage: "Failed to create application.",
+      fallbackCode: "application_create_failed",
+    });
   }
 }
 
@@ -204,7 +189,7 @@ export async function PATCH(request: Request) {
   const currentUser = await getCurrentUserRecord();
 
   if (!currentUser) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   const originError = validateTrustedOrigin(request);
@@ -226,14 +211,11 @@ export async function PATCH(request: Request) {
       resumeId?: unknown;
     };
   } catch {
-    return NextResponse.json(
-      { error: "Request body must be valid JSON." },
-      { status: 400 },
-    );
+    return badRequestResponse("Request body must be valid JSON.", "invalid_json");
   }
 
   if (!isNonEmptyString(payload.id)) {
-    return NextResponse.json({ error: "id is required." }, { status: 400 });
+    return badRequestResponse("id is required.", "missing_id");
   }
 
   const updateData: {
@@ -244,7 +226,7 @@ export async function PATCH(request: Request) {
   if (payload.status !== undefined) {
     if (!isNonEmptyString(payload.status)) {
       return NextResponse.json(
-        { error: "status must be a non-empty string when provided." },
+        { error: "status must be a non-empty string when provided.", code: "invalid_status" },
         { status: 400 },
       );
     }
@@ -268,10 +250,7 @@ export async function PATCH(request: Request) {
   }
 
   if (Object.keys(updateData).length === 0) {
-    return NextResponse.json(
-      { error: "Provide at least one field to update." },
-      { status: 400 },
-    );
+    return badRequestResponse("Provide at least one field to update.", "empty_update");
   }
 
   try {
@@ -285,7 +264,7 @@ export async function PATCH(request: Request) {
     });
 
     if (!existing) {
-      return NextResponse.json({ error: "Not found." }, { status: 404 });
+      return notFoundResponse();
     }
 
     const updated = await prisma.application.update({
@@ -300,7 +279,11 @@ export async function PATCH(request: Request) {
 
     return NextResponse.json(updated);
   } catch (error) {
-    return handlePrismaError(error);
+    return handleRouteError(error, {
+      label: "applications.update",
+      fallbackMessage: "Failed to update application.",
+      fallbackCode: "application_update_failed",
+    });
   }
 }
 
@@ -308,7 +291,7 @@ export async function DELETE(request: Request) {
   const currentUser = await getCurrentUserRecord();
 
   if (!currentUser) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   const originError = validateTrustedOrigin(request);
@@ -326,17 +309,11 @@ export async function DELETE(request: Request) {
   try {
     payload = (await request.json()) as { id?: unknown };
   } catch {
-    return NextResponse.json(
-      { error: "Request body must be valid JSON." },
-      { status: 400 },
-    );
+    return badRequestResponse("Request body must be valid JSON.", "invalid_json");
   }
 
   if (!isNonEmptyString(payload.id)) {
-    return NextResponse.json(
-      { error: "id is required." },
-      { status: 400 },
-    );
+    return badRequestResponse("id is required.", "missing_id");
   }
 
   try {
@@ -348,11 +325,15 @@ export async function DELETE(request: Request) {
     });
 
     if (deleted.count === 0) {
-      return NextResponse.json({ error: "Not found." }, { status: 404 });
+      return notFoundResponse();
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    return handlePrismaError(error);
+    return handleRouteError(error, {
+      label: "applications.delete",
+      fallbackMessage: "Failed to delete application.",
+      fallbackCode: "application_delete_failed",
+    });
   }
 }

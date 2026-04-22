@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 
 import { normalizeApplicationStatus } from "@/lib/application-status";
+import {
+  HttpError,
+  badRequestResponse,
+  handleRouteError,
+  unauthorizedResponse,
+} from "@/lib/api-error";
 import { getCurrentUserRecord } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
 import { enforceRateLimit } from "@/lib/rate-limit";
@@ -23,7 +29,7 @@ export async function GET() {
   const currentUser = await getCurrentUserRecord();
 
   if (!currentUser) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   try {
@@ -41,13 +47,12 @@ export async function GET() {
     }));
 
     return NextResponse.json(normalizedData);
-  } catch {
-    return NextResponse.json(
-      {
-        error: "Failed to load imports.",
-      },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleRouteError(error, {
+      label: "imports.list",
+      fallbackMessage: "Failed to load imports.",
+      fallbackCode: "imports_load_failed",
+    });
   }
 }
 
@@ -55,7 +60,7 @@ export async function POST(req: Request) {
   const currentUser = await getCurrentUserRecord();
 
   if (!currentUser) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   const originError = validateTrustedOrigin(req);
@@ -77,17 +82,17 @@ export async function POST(req: Request) {
     };
 
     if (!isNonEmptyString(body.id)) {
-      return NextResponse.json({ error: "Missing id" }, { status: 400 });
+      return badRequestResponse("Missing id", "missing_id");
     }
 
     const trimmedId = body.id.trim();
 
     if (body.company !== undefined && !isNonEmptyString(body.company)) {
-      return NextResponse.json({ error: "Company is required." }, { status: 400 });
+      return badRequestResponse("Company is required.", "invalid_company");
     }
 
     if (body.role !== undefined && !isNonEmptyString(body.role)) {
-      return NextResponse.json({ error: "Role is required." }, { status: 400 });
+      return badRequestResponse("Role is required.", "invalid_role");
     }
 
     await prisma.$transaction(async (tx) => {
@@ -99,7 +104,7 @@ export async function POST(req: Request) {
       });
 
       if (!email) {
-        throw new Error("NOT_FOUND");
+        throw new HttpError(404, "not_found", "Import not found.");
       }
 
       const nextStatus =
@@ -165,15 +170,10 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    if (error instanceof Error && error.message === "NOT_FOUND") {
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
-    }
-
-    return NextResponse.json(
-      {
-        error: "Failed to approve import.",
-      },
-      { status: 500 },
-    );
+    return handleRouteError(error, {
+      label: "imports.approve",
+      fallbackMessage: "Failed to approve import.",
+      fallbackCode: "import_approve_failed",
+    });
   }
 }

@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { rateLimitResponse } from "@/lib/api-error";
 
 type RateLimitOptions = {
   key: string;
@@ -32,14 +32,9 @@ export function enforceRateLimit({ key, limit, windowMs }: RateLimitOptions) {
   }
 
   if (current.count >= limit) {
-    return NextResponse.json(
-      { error: "Too many requests. Please slow down and try again shortly." },
-      {
-        status: 429,
-        headers: {
-          "Retry-After": String(Math.ceil((current.resetAt - now) / 1000)),
-        },
-      },
+    return rateLimitResponse(
+      "Too many requests. Please slow down and try again shortly.",
+      Math.ceil((current.resetAt - now) / 1000),
     );
   }
 
