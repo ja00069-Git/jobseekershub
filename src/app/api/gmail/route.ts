@@ -22,6 +22,7 @@ type GmailMessagePart = {
 
 type GmailMessage = {
   id?: string;
+  internalDate?: string;
   snippet?: string;
   payload?: GmailMessagePart;
 };
@@ -103,6 +104,15 @@ function stripHtml(value: string) {
     .replace(/&quot;/gi, '"')
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function parsePossibleDate(value: string | null | undefined) {
+  if (!value) {
+    return null;
+  }
+
+  const timestamp = Date.parse(value.trim());
+  return Number.isNaN(timestamp) ? null : new Date(timestamp);
 }
 
 function extractPayloadText(part?: GmailMessagePart): string {
@@ -340,6 +350,25 @@ function calculateAccuracyScore({
   return Math.min(score, 100);
 }
 
+function extractAppliedAt(text: string, internalDate?: string) {
+  const explicitDateMatch = text.match(
+    /\bapplied on\s+([A-Z][a-z]+\s+\d{1,2},\s+\d{4})\b/i,
+  );
+
+  const explicitDate = parsePossibleDate(explicitDateMatch?.[1]);
+
+  if (explicitDate) {
+    return explicitDate;
+  }
+
+  if (!internalDate) {
+    return null;
+  }
+
+  const internalTimestamp = Number.parseInt(internalDate, 10);
+  return Number.isNaN(internalTimestamp) ? null : new Date(internalTimestamp);
+}
+
 /**
  * STATUS
  */
@@ -505,6 +534,7 @@ export async function GET(request: Request) {
         if (existingApp) return null;
 
         const status = detectStatus(`${subject} ${from} ${emailText}`.toLowerCase());
+        const appliedAt = extractAppliedAt(`${subject} ${emailText}`, message.internalDate);
         const score = calculateAccuracyScore({
           source,
           subject,
@@ -529,6 +559,7 @@ export async function GET(request: Request) {
             role,
             source: sourceLabel,
             status,
+            appliedAt,
             score,
           },
           create: {
@@ -540,6 +571,7 @@ export async function GET(request: Request) {
             role,
             source: sourceLabel,
             status,
+            appliedAt,
             score,
             ownerId,
           },

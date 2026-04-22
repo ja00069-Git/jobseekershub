@@ -4,7 +4,11 @@ import { useCallback, useEffect, useState } from "react";
 import { FiBriefcase, FiCheckCircle, FiInbox, FiMail, FiXCircle } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 
-import { APPLICATION_STATUS_OPTIONS, getStatusLabel, normalizeApplicationStatus } from "@/lib/application-status";
+import {
+  APPLICATION_STATUS_OPTIONS,
+  normalizeApplicationStatus,
+  type ApplicationStatus,
+} from "@/lib/application-status";
 
 type ImportedEmail = {
   id: string;
@@ -21,7 +25,7 @@ type ImportedEmail = {
 type ApprovalUpdates = {
   company: string;
   role: string;
-  status: string;
+  status: ApplicationStatus;
 };
 
 type ReviewQueueProps = {
@@ -35,6 +39,10 @@ type ReviewCardProps = {
   isApproving: boolean;
   isRejecting: boolean;
 };
+
+function isApplicationStatus(value: string): value is ApplicationStatus {
+  return APPLICATION_STATUS_OPTIONS.some((option) => option.value === value);
+}
 
 export default function ReviewQueue({ pendingCount }: ReviewQueueProps) {
   const [emails, setEmails] = useState<ImportedEmail[]>([]);
@@ -228,7 +236,11 @@ function Card({
           <div className="min-w-0 flex-1">
             <select
               value={status}
-              onChange={(e) => setStatus(e.target.value)}
+              onChange={(e) => {
+                if (isApplicationStatus(e.target.value)) {
+                  setStatus(e.target.value);
+                }
+              }}
               className="rounded-full border border-sky-200 bg-sky-50 px-3 py-0.5 text-xs font-semibold uppercase tracking-widest text-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-400 dark:border-sky-800 dark:bg-sky-950 dark:text-sky-300"
             >
               {APPLICATION_STATUS_OPTIONS.map((opt) => (
@@ -356,20 +368,3 @@ function getConfidenceMeta(score: number) {
   };
 }
 
-function formatStatus(status: string | null | undefined) {
-  if (!status) {
-    return "Needs review";
-  }
-
-  const normalizedStatus = normalizeApplicationStatus(status);
-
-  if (normalizedStatus) {
-    return getStatusLabel(normalizedStatus);
-  }
-
-  return status
-    .replace(/_/g, " ")
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}

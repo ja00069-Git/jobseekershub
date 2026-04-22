@@ -6,6 +6,9 @@ import { prisma } from "@/lib/prisma";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { validateTrustedOrigin } from "@/lib/request-security";
 
+const isNonEmptyString = (value: unknown): value is string =>
+  typeof value === "string" && value.trim().length > 0;
+
 function detectImportSource(from: string) {
   const lower = from.toLowerCase();
 
@@ -73,49 +76,64 @@ export async function POST(req: Request) {
       status?: string;
     };
 
-    if (!body.id) {
+    if (!isNonEmptyString(body.id)) {
       return NextResponse.json({ error: "Missing id" }, { status: 400 });
     }
 
-    const email = await prisma.importedEmail.findFirst({
-      where: {
-        id: body.id,
-        ownerId: currentUser.user.id,
-      },
-    });
+    const trimmedId = body.id.trim();
 
-    if (!email) {
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    if (body.company !== undefined && !isNonEmptyString(body.company)) {
+      return NextResponse.json({ error: "Company is required." }, { status: 400 });
     }
 
-    const nextStatus =
-      normalizeApplicationStatus(body.status) ??
-      normalizeApplicationStatus(email.status) ??
-      "applied";
+    if (body.role !== undefined && !isNonEmptyString(body.role)) {
+      return NextResponse.json({ error: "Role is required." }, { status: 400 });
+    }
 
-    const updated = await prisma.importedEmail.update({
-      where: { id: body.id },
-      data: {
-        company: body.company?.trim() || email.company,
-        role: body.role?.trim() || email.role,
-        status: nextStatus,
-      },
-    });
+    await prisma.$transaction(async (tx) => {
+      const email = await tx.importedEmail.findFirst({
+        where: {
+          id: trimmedId,
+          ownerId: currentUser.user.id,
+        },
+      });
 
-    const existingApplication = updated.gmailId
-      ? await prisma.application.findFirst({
-          where: {
-            ownerId: currentUser.user.id,
-            gmailId: updated.gmailId,
-          },
-        })
-      : null;
+      if (!email) {
+        throw new Error("NOT_FOUND");
+      }
 
-    if (!existingApplication) {
+      const nextStatus =
+        normalizeApplicationStatus(body.status) ??
+        normalizeApplicationStatus(email.status) ??
+        "applied";
+
+      const updated = await tx.importedEmail.update({
+        where: { id: trimmedId },
+        data: {
+          company: body.company?.trim() || email.company,
+          role: body.role?.trim() || email.role,
+          status: nextStatus,
+          reviewed: true,
+        },
+      });
+
+      const existingApplication = updated.gmailId
+        ? await tx.application.findFirst({
+            where: {
+              ownerId: currentUser.user.id,
+              gmailId: updated.gmailId,
+            },
+          })
+        : null;
+
+      if (existingApplication) {
+        return;
+      }
+
       const companyName = updated.company?.trim() || "Unknown";
       const companyRecord =
         companyName !== "Unknown"
-          ? await prisma.company.upsert({
+          ? await tx.company.upsert({
               where: {
                 ownerId_name: {
                   ownerId: currentUser.user.id,
@@ -130,28 +148,27 @@ export async function POST(req: Request) {
             })
           : null;
 
-      await prisma.application.create({
+      await tx.application.create({
         data: {
           company: companyName,
           role: updated.role || "Unknown Role",
           status: nextStatus,
           source: updated.source || detectImportSource(updated.from),
-          dateApplied: new Date(),
+          dateApplied: updated.appliedAt ?? updated.createdAt,
           gmailId: updated.gmailId,
           ownerId: currentUser.user.id,
           companyId: companyRecord?.id,
           notes: `Imported from Gmail: ${email.subject} (score: ${email.score})`,
         },
       });
-    }
-
-    await prisma.importedEmail.update({
-      where: { id: body.id },
-      data: { reviewed: true },
     });
 
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    if (error instanceof Error && error.message === "NOT_FOUND") {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
     return NextResponse.json(
       {
         error: "Failed to approve import.",

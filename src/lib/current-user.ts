@@ -15,13 +15,8 @@ type CurrentUserContext = {
 };
 
 const globalForUserAdoption = globalThis as {
-  __jobHuntAdoptedUsers?: Set<string>;
   __jobHuntDatabaseWarningShown?: boolean;
 };
-
-const adoptedUsers =
-  globalForUserAdoption.__jobHuntAdoptedUsers ??
-  (globalForUserAdoption.__jobHuntAdoptedUsers = new Set<string>());
 
 function isDatabaseUnavailableError(error: unknown) {
   if (!(error instanceof Error)) {
@@ -45,27 +40,6 @@ function logDatabaseWarning(error: Error) {
     "Database access is unavailable. Falling back to an empty user context until DATABASE_URL credentials are fixed.",
     error,
   );
-}
-
-async function adoptLegacyRecords(userId: string) {
-  await Promise.all([
-    prisma.company.updateMany({
-      where: { ownerId: null },
-      data: { ownerId: userId },
-    }),
-    prisma.resume.updateMany({
-      where: { ownerId: null },
-      data: { ownerId: userId },
-    }),
-    prisma.application.updateMany({
-      where: { ownerId: null },
-      data: { ownerId: userId },
-    }),
-    prisma.importedEmail.updateMany({
-      where: { ownerId: null },
-      data: { ownerId: userId },
-    }),
-  ]);
 }
 
 export async function getCurrentUserRecord(): Promise<CurrentUserContext | null> {
@@ -95,11 +69,6 @@ export async function getCurrentUserRecord(): Promise<CurrentUserContext | null>
         image: true,
       },
     });
-
-    if (!adoptedUsers.has(user.id)) {
-      await adoptLegacyRecords(user.id);
-      adoptedUsers.add(user.id);
-    }
 
     return {
       session,

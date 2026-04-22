@@ -13,6 +13,13 @@ type ResumeItem = {
   applicationCount: number;
 };
 
+type ResumeUploadResponse = {
+  fileUrl?: string;
+  fileName?: string;
+  pathname?: string;
+  error?: string;
+};
+
 const resumeDateFormatter = new Intl.DateTimeFormat("en-US", {
   month: "short",
   day: "numeric",
@@ -53,6 +60,7 @@ export default function ResumeManager({
     try {
       let resolvedName = name.trim();
       let resolvedFileUrl = fileUrl.trim();
+      let resolvedBlobPathname = "";
 
       if (file) {
         const formData = new FormData();
@@ -64,7 +72,7 @@ export default function ResumeManager({
         });
 
         const uploadData = (await uploadResponse.json().catch(() => null)) as
-          | { fileUrl?: string; fileName?: string; error?: string }
+          | ResumeUploadResponse
           | null;
 
         if (!uploadResponse.ok || !uploadData?.fileUrl) {
@@ -72,6 +80,7 @@ export default function ResumeManager({
         }
 
         resolvedFileUrl = uploadData.fileUrl;
+  resolvedBlobPathname = uploadData.pathname?.trim() || "";
 
         if (!resolvedName) {
           resolvedName = (uploadData.fileName || file.name)
@@ -92,6 +101,7 @@ export default function ResumeManager({
         body: JSON.stringify({
           name: resolvedName,
           fileUrl: resolvedFileUrl,
+          blobPathname: resolvedBlobPathname || null,
         }),
       });
 

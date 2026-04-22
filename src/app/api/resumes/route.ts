@@ -1,3 +1,4 @@
+import { del } from "@vercel/blob";
 import { NextResponse } from "next/server";
 
 import { getCurrentUserRecord } from "@/lib/current-user";
@@ -22,6 +23,28 @@ const parseSafeHttpUrl = (value: unknown) => {
     return null;
   }
 };
+
+const parseOptionalString = (value: unknown) => {
+  if (!isNonEmptyString(value)) {
+    return null;
+  }
+
+  return value.trim();
+};
+
+function getBlobPathnameFromUrl(value: string) {
+  if (!value.includes(".blob.vercel-storage.com/")) {
+    return null;
+  }
+
+  try {
+    const url = new URL(value);
+    const pathname = url.pathname.replace(/^\//, "").trim();
+    return pathname ? decodeURIComponent(pathname) : null;
+  } catch {
+    return null;
+  }
+}
 
 export async function GET() {
   const currentUser = await getCurrentUserRecord();
@@ -64,10 +87,14 @@ export async function POST(request: Request) {
   });
   if (rateLimitError) return rateLimitError;
 
-  let payload: { name?: unknown; fileUrl?: unknown };
+  let payload: { name?: unknown; fileUrl?: unknown; blobPathname?: unknown };
 
   try {
-    payload = (await request.json()) as { name?: unknown; fileUrl?: unknown };
+    payload = (await request.json()) as {
+      name?: unknown;
+      fileUrl?: unknown;
+      blobPathname?: unknown;
+    };
   } catch {
     return NextResponse.json(
       { error: "Request body must be valid JSON." },
@@ -89,6 +116,7 @@ export async function POST(request: Request) {
       data: {
         name: payload.name.trim(),
         fileUrl,
+        blobPathname: parseOptionalString(payload.blobPathname),
         ownerId: currentUser.user.id,
       },
     });
@@ -139,19 +167,43 @@ export async function DELETE(request: Request) {
   try {
     const targetId = payload.id.trim();
 
-    await prisma.application.updateMany({
-      where: {
-        resumeId: targetId,
-        ownerId: currentUser.user.id,
-      },
-      data: { resumeId: null },
-    });
-
-    const deleted = await prisma.resume.deleteMany({
+    const resume = await prisma.resume.findFirst({
       where: {
         id: targetId,
         ownerId: currentUser.user.id,
       },
+      select: {
+        id: true,
+        blobPathname: true,
+        fileUrl: true,
+      },
+    });
+
+    if (!resume) {
+      return NextResponse.json({ error: "Not found." }, { status: 404 });
+    }
+
+    const blobPathname = resume.blobPathname || getBlobPathnameFromUrl(resume.fileUrl);
+
+    if (blobPathname) {
+      await del(blobPathname);
+    }
+
+    const deleted = await prisma.$transaction(async (tx) => {
+      await tx.application.updateMany({
+        where: {
+          resumeId: targetId,
+          ownerId: currentUser.user.id,
+        },
+        data: { resumeId: null },
+      });
+
+      return tx.resume.deleteMany({
+        where: {
+          id: targetId,
+          ownerId: currentUser.user.id,
+        },
+      });
     });
 
     if (deleted.count === 0) {
