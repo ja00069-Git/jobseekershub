@@ -16,6 +16,11 @@ import {
   normalizeApplicationStatus,
   type ApplicationStatus,
 } from "@/lib/application-status";
+import {
+  getFriendlyApiErrorMessage,
+  readApiJson,
+  type ApiErrorPayload,
+} from "@/lib/api-client-error";
 
 type Application = {
   id: string;
@@ -56,6 +61,7 @@ export default function KanbanBoard({
   const router = useRouter();
   const [items, setItems] = useState(() => normalizeBoardApplications(applications));
   const [isMounted, setIsMounted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     setItems(normalizeBoardApplications(applications));
@@ -85,6 +91,7 @@ export default function KanbanBoard({
     }
 
     const previousItems = items;
+    setErrorMessage("");
 
     // Move the card immediately for a snappy feel, then roll back if the
     // server update fails.
@@ -107,18 +114,25 @@ export default function KanbanBoard({
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update application status.");
+        const payload = await readApiJson<ApiErrorPayload>(response);
+        throw new Error(
+          getFriendlyApiErrorMessage(payload, "Failed to update application status."),
+        );
       }
 
       router.refresh();
-    } catch {
+    } catch (error) {
       setItems(previousItems);
+      setErrorMessage(
+        error instanceof Error ? error.message : "Failed to update application status.",
+      );
     }
   }
 
   async function handleResumeChange(id: string, resumeId: string) {
     const previousItems = items;
     const selectedResume = resumes.find((resume) => resume.id === resumeId) ?? null;
+    setErrorMessage("");
 
     setItems((prev) =>
       prev.map((item) =>
@@ -145,12 +159,14 @@ export default function KanbanBoard({
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update resume.");
+        const payload = await readApiJson<ApiErrorPayload>(response);
+        throw new Error(getFriendlyApiErrorMessage(payload, "Failed to update resume."));
       }
 
       router.refresh();
-    } catch {
+    } catch (error) {
       setItems(previousItems);
+      setErrorMessage(error instanceof Error ? error.message : "Failed to update resume.");
     }
   }
 
@@ -182,13 +198,20 @@ export default function KanbanBoard({
   );
 
   return (
-    <DndContext
-      id="jobseekershub-kanban"
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      {board}
-    </DndContext>
+    <div className="space-y-3">
+      {errorMessage ? (
+        <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+          {errorMessage}
+        </div>
+      ) : null}
+      <DndContext
+        id="jobseekershub-kanban"
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        {board}
+      </DndContext>
+    </div>
   );
 }
 

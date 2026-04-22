@@ -9,6 +9,11 @@ import {
   APPLICATION_STATUS_OPTIONS,
   type ApplicationStatus,
 } from "@/lib/application-status";
+import {
+  getFriendlyApiErrorMessage,
+  readApiJson,
+  type ApiErrorPayload,
+} from "@/lib/api-client-error";
 
 const getTodayDate = () => new Date().toISOString().split("T")[0] ?? "";
 const fieldClassName = "ui-input";
@@ -72,12 +77,12 @@ export default function ApplicationForm({
         }),
       });
 
-      const result = (await response.json().catch(() => null)) as
-        | { error?: string }
-        | null;
+      const result = await readApiJson<ApiErrorPayload>(response);
 
       if (!response.ok) {
-        throw new Error(result?.error || "Could not save the application.");
+        throw new Error(
+          getFriendlyApiErrorMessage(result, "Could not save the application."),
+        );
       }
 
       setSuccessMessage("Application added successfully.");

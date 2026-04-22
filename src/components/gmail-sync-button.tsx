@@ -4,6 +4,12 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 
+import {
+  getFriendlyApiErrorMessage,
+  readApiJson,
+  type ApiErrorPayload,
+} from "@/lib/api-client-error";
+
 type MessageTone = "info" | "success" | "error";
 
 export default function GmailSyncButton() {
@@ -37,14 +43,12 @@ export default function GmailSyncButton() {
           cache: "no-store",
         });
 
-        const data = (await response.json().catch(() => [])) as
-          | Array<{ applicationId?: string }>
-          | { error?: string };
+        const data = await readApiJson<Array<{ applicationId?: string }> | ApiErrorPayload>(response);
 
         if (!response.ok) {
           throw new Error(
-            !Array.isArray(data) && data?.error
-              ? data.error
+            !Array.isArray(data)
+              ? getFriendlyApiErrorMessage(data, "Could not check Gmail for job emails.")
               : "Could not check Gmail for job emails.",
           );
         }

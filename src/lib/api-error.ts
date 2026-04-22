@@ -1,6 +1,8 @@
 import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 
+import { reportServerError } from "@/lib/server-monitoring";
+
 type ErrorResponseOptions = {
   status: number;
   code: string;
@@ -148,12 +150,12 @@ export function handleRouteError(
 
   const prismaResponse = mapPrismaError(error);
   if (prismaResponse) {
-    console.error(`[api:${label}]`, error);
+    reportServerError({ label, error });
     return prismaResponse;
   }
 
   const requestId = crypto.randomUUID();
-  console.error(`[api:${label}]`, requestId, error);
+  reportServerError({ label, error, requestId });
 
   return errorResponse({
     status: fallbackStatus,

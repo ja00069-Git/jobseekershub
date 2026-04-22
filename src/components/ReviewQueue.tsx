@@ -9,6 +9,11 @@ import {
   normalizeApplicationStatus,
   type ApplicationStatus,
 } from "@/lib/application-status";
+import {
+  getFriendlyApiErrorMessage,
+  readApiJson,
+  type ApiErrorPayload,
+} from "@/lib/api-client-error";
 
 type ImportedEmail = {
   id: string;
@@ -65,10 +70,19 @@ export default function ReviewQueue({ pendingCount }: ReviewQueueProps) {
         throw new Error("Could not load emails to review.");
       }
 
-      const data = (await res.json()) as unknown;
+      const data = await readApiJson<unknown>(res);
+
+      if (!res.ok) {
+        throw new Error(
+          getFriendlyApiErrorMessage(data as ApiErrorPayload | null, "Could not load emails to review."),
+        );
+      }
+
       setEmails(Array.isArray(data) ? (data as ImportedEmail[]) : []);
-    } catch {
-      setError("Could not load emails to review.");
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "Could not load emails to review.",
+      );
     } finally {
       setLoading(false);
     }
@@ -94,12 +108,10 @@ export default function ReviewQueue({ pendingCount }: ReviewQueueProps) {
         }),
       });
 
-      const data = (await res.json().catch(() => ({ error: "Approval failed." }))) as {
-        error?: string;
-      };
+      const data = await readApiJson<ApiErrorPayload>(res);
 
       if (!res.ok) {
-        throw new Error(data.error || "Failed to approve email.");
+        throw new Error(getFriendlyApiErrorMessage(data, "Failed to approve email."));
       }
 
       setEmails((prev) => prev.filter((email) => email.id !== id));
@@ -120,12 +132,10 @@ export default function ReviewQueue({ pendingCount }: ReviewQueueProps) {
         method: "DELETE",
       });
 
-      const data = (await res.json().catch(() => ({ error: "Reject failed." }))) as {
-        error?: string;
-      };
+      const data = await readApiJson<ApiErrorPayload>(res);
 
       if (!res.ok) {
-        throw new Error(data.error || "Failed to reject email.");
+        throw new Error(getFriendlyApiErrorMessage(data, "Failed to reject email."));
       }
 
       setEmails((prev) => prev.filter((email) => email.id !== id));

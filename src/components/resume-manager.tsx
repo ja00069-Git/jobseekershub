@@ -5,6 +5,12 @@ import { FiExternalLink, FiFileText, FiTrash2 } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
 
+import {
+  getFriendlyApiErrorMessage,
+  readApiJson,
+  type ApiErrorPayload,
+} from "@/lib/api-client-error";
+
 type ResumeItem = {
   id: string;
   name: string;
@@ -71,16 +77,14 @@ export default function ResumeManager({
           body: formData,
         });
 
-        const uploadData = (await uploadResponse.json().catch(() => null)) as
-          | ResumeUploadResponse
-          | null;
+        const uploadData = await readApiJson<ResumeUploadResponse & ApiErrorPayload>(uploadResponse);
 
         if (!uploadResponse.ok || !uploadData?.fileUrl) {
-          throw new Error(uploadData?.error || "Failed to upload file.");
+          throw new Error(getFriendlyApiErrorMessage(uploadData, "Failed to upload file."));
         }
 
         resolvedFileUrl = uploadData.fileUrl;
-  resolvedBlobPathname = uploadData.pathname?.trim() || "";
+        resolvedBlobPathname = uploadData.pathname?.trim() || "";
 
         if (!resolvedName) {
           resolvedName = (uploadData.fileName || file.name)
@@ -105,15 +109,10 @@ export default function ResumeManager({
         }),
       });
 
-      const data = (await response.json().catch(() => null)) as
-        | ResumeItem
-        | { error?: string }
-        | null;
+      const data = await readApiJson<(ResumeItem & ApiErrorPayload) | ApiErrorPayload>(response);
 
       if (!response.ok) {
-        throw new Error(
-          data && "error" in data ? data.error || "Failed to save resume." : "Failed to save resume.",
-        );
+        throw new Error(getFriendlyApiErrorMessage(data, "Failed to save resume."));
       }
 
       const createdResume = {
@@ -152,12 +151,10 @@ export default function ResumeManager({
         body: JSON.stringify({ id }),
       });
 
-      const data = (await response.json().catch(() => null)) as
-        | { error?: string }
-        | null;
+      const data = await readApiJson<ApiErrorPayload>(response);
 
       if (!response.ok) {
-        throw new Error(data?.error || "Failed to delete resume.");
+        throw new Error(getFriendlyApiErrorMessage(data, "Failed to delete resume."));
       }
 
       setResumes((current) => current.filter((resume) => resume.id !== id));
